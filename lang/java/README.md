@@ -4,6 +4,8 @@
 
 基本语法：接口、继承、重载、多态、关键字、 《Java 核心编程卷一》
 
+软引用，弱引用，强引用:
+
 值传递和引用传递：
 
 fast-fail：
@@ -13,6 +15,16 @@ fast-fail：
 注解：
 
 反射：
+
+https://blog.csdn.net/hanchao5272/column/info/20010
+
+MethHandle
+https://www.jianshu.com/p/a9cecf8ba5d9
+https://blog.csdn.net/zmx729618/article/details/78968810
+https://cloud.tencent.com/developer/article/1005920
+https://www.imooc.com/article/details/id/25992
+https://blog.csdn.net/qq_31142553/article/details/81638027
+
 
 泛型：参考书目《Java 核心编程》
 
@@ -46,7 +58,11 @@ SPI
 
 ### JDK
 
+http://cxis.me/archives/page/8/
+
 数据结构：Collections，Arrays，Map，List，Set系列
+
+https://www.cnblogs.com/xiaoxi/category/929860.html
 
 类加载：Class
 
@@ -56,9 +72,10 @@ Socket：
 
 IO：Buffer，FileChannel，AsynchronousFileChannel
 
-NIO：
 
-线程：ThreadPool，Executors，
+NIO： https://www.cnblogs.com/xiaoxi/category/961993.html
+
+线程：ThreadPool，Executors， https://www.cnblogs.com/xiaoxi/category/961349.html
 
 反射：
 
@@ -75,6 +92,9 @@ NIO：
 
 
 #### spring
+
+https://blog.csdn.net/uftjtt/article/list/3?t=1&  spring, mybatis, java
+源码，设计模式
 
 AOP
 
@@ -109,6 +129,8 @@ filter
 
 
 #### spring cloud
+
+https://www.cnblogs.com/li3807/tag/
 
 注册中心：eureka，consul
 
