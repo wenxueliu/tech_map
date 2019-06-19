@@ -78,6 +78,11 @@ openresty：nginx + lua
 
 haproxy（源码）
 
+memcached : https://blog.csdn.net/luotuo44/article/list/1?
+
+libevent : https://blog.csdn.net/luotuo44/article/list/1?
+
+
 《Tcp/Ip详解》《Wireshark》
 
 IO模型：同步、异步、阻塞、非阻塞、事件驱动
@@ -121,6 +126,9 @@ Actor模式
 敏捷：参考书目《敏捷革命》
 
 设计模式：设计原则（单一职责、里氏替换、依赖倒置、接口隔离、迪米特法则、开闭原则）。常用设计模式（不止 23 种）、反模式场景。参考书目《设计模式之禅》秦小波 《大话设计模式》《Head First设计模式》
+
+https://www.cnblogs.com/yulinfeng/category/877773.html
+https://blog.csdn.net/uftjtt/article/category/7477267
 
 ### 系统架构
 
