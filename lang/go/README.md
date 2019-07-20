@@ -42,13 +42,26 @@ Go 模式：Creational、Structrul、Behavioral、Synchronization、Concurrency�
 
 ####学习建议
 
+如果你已经有其他编程语言的经验：那么建议如下顺序
+
+1. 通过例子了解 go 的基本语法 https://gobyexample.com/
+2. 通过老司机介绍 go 的特性 https://www.openmymind.net/assets/go/go.pdf
+3. 从 https://github.com/golang/go/wiki 找到自己感兴趣的开始动手吧
+
 ####必读书目
+
+https://github.com/kjk/go-cookbook
+
+https://github.com/Masterminds/go-in-practice
+
+
 
 ####建议书目
 
 ####开源项目
 
 ####参考
+
 
 协程
 
