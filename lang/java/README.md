@@ -30,7 +30,20 @@ https://blog.csdn.net/qq_31142553/article/details/81638027
 
 IO：参考书目《Java NIO》
 
-并发：线程，锁（synchronized、读写锁、公平锁、不公平锁、偏向锁、悲观锁、乐观锁、可重入锁、不可重入锁、互斥锁、共享锁、轻量级锁、重量级锁、自旋锁、死锁等），线程安全，锁优化、锁消除、锁粗化、ABA问题等。参考书目 《Java 并发编程的艺术》《Java 并发编程》
+#### 并发
+
+CAS
+
+线程：多线程，线程安全
+
+锁
+
+synchronized、读写锁、公平锁、不公平锁、偏向锁、悲观锁、乐观锁、可重入锁、不可重入锁、互斥锁、共享锁、轻量级锁、重量级锁、自旋锁、死锁等）
+锁优化、锁消除、锁粗化、ABA问题等。
+
+AQS
+
+参考书目 《Java 并发编程的艺术》《Java 并发编程》
 
 Java8 ： 实例代码 [java8-lambda](https://github.com/RichardWarburton/java-8-lambdas-exercises)，[Java8InAction](https://github.com/java8/Java8InAction)  https://github.com/CarpenterLee/JavaLambdaInternals       参考书目《Java 8 in action》
 
@@ -85,13 +98,17 @@ NIO： https://www.cnblogs.com/xiaoxi/category/961993.html
 
 [JDK 源码阅读](https://github.com/seaswalker/JDK)
 
- 
+### 设计模式
+
+https://github.com/iluwatar/java-design-patterns
 
 ### JVM
 
-
+参考 JVM.md
 
 #### spring
+
+https://github.com/wuyouzhuguli/SpringAll
 
 https://blog.csdn.net/uftjtt/article/list/3?t=1&  spring, mybatis, java
 源码，设计模式
@@ -108,6 +125,9 @@ filter
 
 [源码分析](https://github.com/seaswalker/spring-analysis)
 
+参数校验 Hibernate Validation
+https://blog.wuwii.com/springboot-10.html
+
 #### mybatis
 
 执行引擎
@@ -121,6 +141,8 @@ filter
 #### tomcat
 
 启动流程
+
+https://www.jianshu.com/p/76ff17bc6dea
 
 
 
@@ -181,6 +203,11 @@ https://github.com/shuzheng/zheng
 好的博客：https://www.hollischuang.com/
 
 
+#### 模块
+
+定时器 :
+认证鉴权：Shiro
+
 
 ### 参考
 
@@ -191,6 +218,8 @@ https://github.com/akullpp/awesome-java#readme
 ### 第三方包
 
 netty： [源码解读](https://github.com/yongshun/learn_netty_source_code)
+
+reactor : https://github.com/reactor/reactor
 
 guava
 
