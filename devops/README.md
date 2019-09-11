@@ -32,7 +32,9 @@ telegraf
 
 grafana
 
-普罗米修斯
+prometheus https://prometheus.io/
+
+osquery: https://blog.spoock.com/2018/11/26/osquery-intro/
 
 #### APM
 
