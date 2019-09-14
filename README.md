@@ -1,5 +1,11 @@
 ## 技术图谱
 
+### 缘起
+
+https://102.alibaba.com/downloadFile.do?file=1530517140411/Codelife.pdf
+
+建议每个程序员都应该读
+
 ### 原则
 
 入选技术、库、方法都是已经被大规模或者正在被大规模使用。这也是与所有 awesome 最大的区别。
@@ -25,6 +31,12 @@
 欢迎 PR
 
 
+### 技术学习建议等级：
+
+* 必须
+* 建议
+* 可选
+
 
 ### 基础
 
@@ -41,6 +53,10 @@ css
 javascript
 
 ### 系统
+
+运维
+
+https://gitlab.com/gitlab-com/runbooks
 
 #### CPU
 
@@ -262,11 +278,27 @@ docker：参考书目 《Docker 源码分析》
 
 ###人工智能
 
+#### 底层驱动
+
+cuDNN
+
+TensorRT
+
+DeepStream SDK
+
+cuBLAS
+
+cuSPARSE
+
+NCCL
+
 #### 框架
 
 tensorflow
 
 pytorch
+
+DL4J
 
 #### GPU
 
