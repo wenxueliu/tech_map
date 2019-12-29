@@ -7,8 +7,15 @@ CSS3
 
 ### 开发工具
 
+VS Code : 现在所有的前端都逐渐过渡到VS Code
 
+查询浏览器对Web API兼容性 https://www.caniuse.com/
 
+复原(反混淆、解包）JS,CSS,HTML的工具 https://unminify.com/
+
+图片压缩
+http://compressor.io/
+https://kraken.io/
 
 #### html
 
