@@ -1,4 +1,8 @@
 
+### 目标
+
+初、中级：扎实的 Java 和计算机科学基础，掌握主流的开源框架使用；
+高级或技术专家：系统地掌握Java IO/NIO、并发、虚拟机；并对分布式、安全、性能等领域有深入研究
 
 ### 基本知识
 
@@ -71,6 +75,8 @@ SPI
 
 ### JDK
 
+https://github.com/seaswalker/JDK
+
 http://cxis.me/archives/page/8/
 
 数据结构：Collections，Arrays，Map，List，Set系列
@@ -109,6 +115,8 @@ https://github.com/iluwatar/java-design-patterns
 #### spring
 
 https://github.com/wuyouzhuguli/SpringAll
+
+https://github.com/seaswalker/spring-analysis
 
 https://blog.csdn.net/uftjtt/article/list/3?t=1&  spring, mybatis, java
 源码，设计模式
@@ -222,6 +230,13 @@ netty： [源码解读](https://github.com/yongshun/learn_netty_source_code)
 reactor : https://github.com/reactor/reactor
 
 guava
+
+#### 建议阅读书目
+
+https://github.com/LingCoder/OnJava8
+https://github.com/Snailclimb/JavaGuide
+
+
 
 #### Apache Commons
 
