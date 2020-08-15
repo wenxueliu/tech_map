@@ -8,13 +8,13 @@ CAP
 
 ### 协议
 
-RAFT
+RAFT : https://mp.weixin.qq.com/s/4Da9NEtDzNA70dU6e7CWGw
 
 Paxos
 
-Zab
+Zab : https://mp.weixin.qq.com/s/5B5lWq8VNfik6RWypkCOEA
 
-Grossip
+Gossip : https://mp.weixin.qq.com/s/vziFrW-DUhcVpHXjS4h_dw
 
 
 

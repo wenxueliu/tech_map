@@ -44,3 +44,4 @@ CDN：
 
 https://github.com/hollischuang/Architecture-Evolution
 
+https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md
