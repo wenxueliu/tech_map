@@ -50,3 +50,9 @@ ElasticSearch
 
 参考书目《这就是搜索引擎》
 
+### 架构
+
+分库分表
+
+[数据库之互联网常用分库分表方案](https://www.cnblogs.com/littlecharacter/p/9342129.html)
+[数据库之互联网常用架构方案](https://www.cnblogs.com/littlecharacter/p/9084291.html)
