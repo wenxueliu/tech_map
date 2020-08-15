@@ -1,0 +1,93 @@
+
+
+
+
+
+
+数据类型
+
+
+
+支持的五种数据类型
+
+```
+#define OBJ_STRING 0    /* String object. */
+#define OBJ_LIST 1      /* List object. */
+#define OBJ_SET 2       /* Set object. */
+#define OBJ_ZSET 3      /* Sorted set object. */
+#define OBJ_HASH 4      /* Hash object. */
+```
+
+
+
+
+
+```
+
+```
+
+
+
+
+
+### 事务机制
+
+采用乐观锁
+
+multi 开启事务，exec 执行事务。在 multi 到 exec 期间数据可能被修改，因此，采用 watch 机制，将涉及的键和客户端对象保持在 watched_keys 中，如果在 multi 到 exec 期间，涉及事务的数据被修改，就会标记为 dirty，exec 的时候，就拒绝执行事务。
+
+
+
+
+
+
+
+### zset
+
+
+
+充分利用 dict 和 skiplist 的特性
+
+对于 dict 查询需要 O(1)，zrange，zrank 需要 O(N*logN)
+
+对于 skiplist，查询需要 O(logN)，zrange，zrank 需要 O(logN)
+
+
+
+
+
+### 思考题
+
+
+
+1、OBJECT_ENCODING_EMBSTR 和 OBJ_ENCODING_RAW 都表示简单动态字符串，两种编码的区别是啥？
+
+```c
+typedef struct redisObject {
+    unsigned type:4;
+    unsigned encoding:4;
+    unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or
+                            * LFU data (least significant 8 bits frequency
+                            * and most significant 16 bits access time). */
+    int refcount;
+    void *ptr;
+} robj;
+```
+
+当字符串比较短时，底层使用OBJECT_ENCODING_EMBSTR，robj 和 sds一起分配，连续存储，充分利用cpu高速缓存，提升内存分配效率与数据访问效率。
+
+
+
+2、client 中 reply 和 buf 都用于返回数据，两者的区别是啥？
+
+reply 用于返回
+
+buf 用户返回
+
+
+
+3、对于命令执行，redis 做了哪些优化？
+
+1. 所有命令保存在数组redisCommandTable中
+2. 初始服务配置时，启动时将所有命令建立 dict 方便 O(1)查找
+3. 将频繁使用的命令保存在 redisServer 中
