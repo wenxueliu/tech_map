@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.transaction.interceptor.TransactionAttributeSourcePointcut</OriginalElement>
+  <nodes>
+    <node x="80.99999999999997" y="451.0">org.springframework.transaction.interceptor.TransactionAttribute</node>
+    <node x="801.9999999999998" y="451.0">org.springframework.aop.Pointcut</node>
+    <node x="194.5" y="375.0">org.springframework.transaction.TransactionDefinition</node>
+    <node x="0.0" y="603.0">org.springframework.transaction.annotation.Ejb3TransactionAnnotationParser.Ejb3TransactionAttribute</node>
+    <node x="679.5" y="750.0">org.springframework.transaction.support.TransactionSynchronizationAdapter</node>
+    <node x="655.2499999999998" y="527.0">org.springframework.aop.support.StaticMethodMatcherPointcut</node>
+    <node x="255.0" y="826.0">org.springframework.transaction.event.ApplicationListenerMethodTransactionalAdapter.TransactionSynchronizationEventAdapter</node>
+    <node x="0.0" y="750.0">org.springframework.transaction.support.ResourceHolderSynchronization</node>
+    <node x="667.75" y="228.0">org.springframework.transaction.jta.WebLogicJtaTransactionManager</node>
+    <node x="475.0" y="152.0">org.springframework.jdbc.datasource.DataSourceTransactionManager</node>
+    <node x="936.75" y="228.0">org.springframework.transaction.jta.WebSphereUowTransactionManager</node>
+    <node x="233.99999999999997" y="603.0">org.springframework.transaction.interceptor.RuleBasedTransactionAttribute</node>
+    <node x="14.0" y="826.0">org.springframework.jca.cci.connection.ConnectionFactoryUtils.ConnectionSynchronization</node>
+    <node x="287.0" y="451.0">org.springframework.transaction.support.DefaultTransactionDefinition</node>
+    <node x="343.3671875" y="228.0">org.springframework.jdbc.datasource.DataSourceTransactionManager.DataSourceTransactionObject</node>
+    <node x="623.9999999999998" y="375.0">org.springframework.aop.MethodMatcher</node>
+    <node x="3.5" y="304.0">org.springframework.transaction.support.DefaultTransactionStatus</node>
+    <node x="115.24999999999997" y="527.0">org.springframework.transaction.interceptor.DefaultTransactionAttribute</node>
+    <node x="627.5" y="76.0">org.springframework.transaction.support.AbstractPlatformTransactionManager</node>
+    <node x="213.0" y="152.0">org.springframework.jdbc.datasource.JdbcTransactionObjectSupport</node>
+    <node x="71.0" y="76.0">org.springframework.transaction.SavepointManager</node>
+    <node x="587.0" y="826.0">org.mybatis.spring.SqlSessionUtils.SqlSessionSynchronization</node>
+    <node x="828.0" y="826.0">org.springframework.jdbc.datasource.DataSourceUtils.ConnectionSynchronization</node>
+    <node x="294.5" y="76.0">org.springframework.transaction.support.SmartTransactionObject</node>
+    <node x="413.765625" y="674.0">org.springframework.transaction.support.TransactionSynchronization</node>
+    <node x="655.5" y="0.0">org.springframework.transaction.PlatformTransactionManager</node>
+    <node x="630.7499999999998" y="603.0">org.springframework.transaction.interceptor.TransactionAttributeSourcePointcut</node>
+    <node x="0.0" y="228.0">org.springframework.transaction.support.AbstractTransactionStatus</node>
+    <node x="378.9999999999999" y="527.0">org.springframework.transaction.support.TransactionTemplate</node>
+    <node x="1069.0" y="826.0">org.springframework.transaction.support.SimpleTransactionScope.CleanupSynchronization</node>
+    <node x="28.0" y="152.0">org.springframework.transaction.TransactionStatus</node>
+    <node x="744.0" y="152.0">org.springframework.transaction.jta.JtaTransactionManager</node>
+    <node x="602.9999999999998" y="451.0">org.springframework.aop.support.StaticMethodMatcher</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.jdbc.datasource.JdbcTransactionObjectSupport" target="org.springframework.transaction.support.SmartTransactionObject">
+      <point x="60.5" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jdbc.datasource.DataSourceTransactionManager" target="org.springframework.transaction.support.AbstractPlatformTransactionManager">
+      <point x="60.5" y="-13.0" />
+      <point x="656.5" y="127.0" />
+      <point x="698.5" y="127.0" />
+      <point x="-71.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jdbc.datasource.JdbcTransactionObjectSupport" target="org.springframework.transaction.SavepointManager">
+      <point x="-60.5" y="-13.0" />
+      <point x="273.5" y="127.0" />
+      <point x="189.5" y="127.0" />
+      <point x="39.5" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.DefaultTransactionDefinition" target="org.springframework.transaction.TransactionDefinition">
+      <point x="0.0" y="-13.0" />
+      <point x="408.0" y="426.0" />
+      <point x="339.25" y="426.0" />
+      <point x="48.25" y="13.0" />
+    </edge>
+    <edge source="org.springframework.aop.support.StaticMethodMatcher" target="org.springframework.aop.MethodMatcher">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jdbc.datasource.DataSourceTransactionManager.DataSourceTransactionObject" target="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <point x="58.75" y="-13.0" />
+      <point x="519.6171875" y="203.0" />
+      <point x="596.0" y="203.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.jta.WebLogicJtaTransactionManager" target="org.springframework.transaction.jta.JtaTransactionManager">
+      <point x="0.0" y="-13.0" />
+      <point x="-48.25" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.TransactionSynchronizationAdapter" target="org.springframework.transaction.support.TransactionSynchronization">
+      <point x="0.0" y="-13.0" />
+      <point x="818.0" y="725.0" />
+      <point x="584.765625" y="725.0" />
+      <point x="57.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.ResourceHolderSynchronization" target="org.springframework.transaction.support.TransactionSynchronization">
+      <point x="0.0" y="-13.0" />
+      <point x="124.5" y="725.0" />
+      <point x="470.765625" y="725.0" />
+      <point x="-57.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.TransactionStatus" target="org.springframework.transaction.SavepointManager">
+      <point x="0.0" y="-13.0" />
+      <point x="-39.5" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.DefaultTransactionStatus" target="org.springframework.transaction.support.AbstractTransactionStatus">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.interceptor.DefaultTransactionAttribute" target="org.springframework.transaction.support.DefaultTransactionDefinition">
+      <point x="58.75" y="-13.0" />
+      <point x="291.5" y="502.0" />
+      <point x="347.5" y="502.0" />
+      <point x="-60.5" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.AbstractTransactionStatus" target="org.springframework.transaction.TransactionStatus">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.interceptor.DefaultTransactionAttribute" target="org.springframework.transaction.interceptor.TransactionAttribute">
+      <point x="-58.75" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.TransactionTemplate" target="org.springframework.transaction.support.DefaultTransactionDefinition">
+      <point x="5.6843418860808015E-14" y="-13.0" />
+      <point x="60.5" y="13.0" />
+    </edge>
+    <edge source="org.springframework.aop.support.StaticMethodMatcherPointcut" target="org.springframework.aop.support.StaticMethodMatcher">
+      <point x="-58.75" y="-13.0" />
+      <point x="713.9999999999998" y="502.0" />
+      <point x="692.4999999999998" y="502.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.annotation.Ejb3TransactionAnnotationParser.Ejb3TransactionAttribute" target="org.springframework.transaction.interceptor.DefaultTransactionAttribute">
+      <point x="0.0" y="-13.0" />
+      <point x="107.0" y="578.0" />
+      <point x="173.99999999999997" y="578.0" />
+      <point x="-58.75" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jdbc.datasource.DataSourceUtils.ConnectionSynchronization" target="org.springframework.transaction.support.TransactionSynchronizationAdapter">
+      <point x="0.0" y="-13.0" />
+      <point x="938.5" y="806.0" />
+      <point x="852.625" y="806.0" />
+      <point x="34.625" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.AbstractPlatformTransactionManager" target="org.springframework.transaction.PlatformTransactionManager">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.jta.WebSphereUowTransactionManager" target="org.springframework.transaction.jta.JtaTransactionManager">
+      <point x="-64.0" y="-13.0" />
+      <point x="1000.75" y="203.0" />
+      <point x="888.75" y="203.0" />
+      <point x="48.25" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jdbc.datasource.DataSourceTransactionManager.DataSourceTransactionObject" target="org.springframework.jdbc.datasource.JdbcTransactionObjectSupport">
+      <point x="-58.75" y="-13.0" />
+      <point x="402.1171875" y="203.0" />
+      <point x="334.0" y="203.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.jta.WebSphereUowTransactionManager" target="org.springframework.transaction.PlatformTransactionManager">
+      <point x="64.0" y="-13.0" />
+      <point x="1128.75" y="51.0" />
+      <point x="845.5" y="51.0" />
+      <point x="76.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.interceptor.TransactionAttribute" target="org.springframework.transaction.TransactionDefinition">
+      <point x="2.8421709430404007E-14" y="-13.0" />
+      <point x="174.0" y="426.0" />
+      <point x="242.75" y="426.0" />
+      <point x="-48.25" y="13.0" />
+    </edge>
+    <edge source="org.mybatis.spring.SqlSessionUtils.SqlSessionSynchronization" target="org.springframework.transaction.support.TransactionSynchronizationAdapter">
+      <point x="0.0" y="-13.0" />
+      <point x="697.5" y="806.0" />
+      <point x="783.375" y="806.0" />
+      <point x="-34.625" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jca.cci.connection.ConnectionFactoryUtils.ConnectionSynchronization" target="org.springframework.transaction.support.ResourceHolderSynchronization">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.interceptor.TransactionAttributeSourcePointcut" target="org.springframework.aop.support.StaticMethodMatcherPointcut">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.aop.support.StaticMethodMatcherPointcut" target="org.springframework.aop.Pointcut">
+      <point x="58.75" y="-13.0" />
+      <point x="831.4999999999998" y="502.0" />
+      <point x="852.9999999999998" y="502.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.jta.JtaTransactionManager" target="org.springframework.transaction.support.AbstractPlatformTransactionManager">
+      <point x="0.0" y="-13.0" />
+      <point x="71.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.support.SimpleTransactionScope.CleanupSynchronization" target="org.springframework.transaction.support.TransactionSynchronizationAdapter">
+      <point x="0.0" y="-13.0" />
+      <point x="1169.0" y="796.0" />
+      <point x="921.875" y="796.0" />
+      <point x="103.875" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.event.ApplicationListenerMethodTransactionalAdapter.TransactionSynchronizationEventAdapter" target="org.springframework.transaction.support.TransactionSynchronizationAdapter">
+      <point x="0.0" y="-13.0" />
+      <point x="411.0" y="796.0" />
+      <point x="714.125" y="796.0" />
+      <point x="-103.875" y="13.0" />
+    </edge>
+    <edge source="org.springframework.jdbc.datasource.DataSourceTransactionManager" target="org.springframework.transaction.PlatformTransactionManager">
+      <point x="-60.5" y="-13.0" />
+      <point x="535.5" y="51.0" />
+      <point x="693.5" y="51.0" />
+      <point x="-76.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.transaction.interceptor.RuleBasedTransactionAttribute" target="org.springframework.transaction.interceptor.DefaultTransactionAttribute">
+      <point x="0.0" y="-13.0" />
+      <point x="358.5" y="578.0" />
+      <point x="291.5" y="578.0" />
+      <point x="58.75" y="13.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="612.5" y="300.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

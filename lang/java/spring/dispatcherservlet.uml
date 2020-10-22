@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.web.servlet.FrameworkServlet</OriginalElement>
+  <nodes>
+    <node x="115.0" y="0.0">javax.servlet.ServletConfig</node>
+    <node x="388.6388888888889" y="380.0">org.springframework.web.servlet.DispatcherServlet</node>
+    <node x="54.0" y="152.0">javax.servlet.http.HttpServlet</node>
+    <node x="207.5" y="228.0">org.springframework.web.servlet.HttpServletBean</node>
+    <node x="389.0" y="152.0">org.springframework.context.EnvironmentAware</node>
+    <node x="197.0" y="152.0">org.springframework.core.env.EnvironmentCapable</node>
+    <node x="43.5" y="76.0">javax.servlet.GenericServlet</node>
+    <node x="0.0" y="0.0">javax.servlet.Servlet</node>
+    <node x="537.7847222222222" y="76.0">org.springframework.beans.factory.Aware</node>
+    <node x="392.1388888888889" y="304.0">org.springframework.web.servlet.FrameworkServlet</node>
+    <node x="567.0" y="152.0">org.springframework.context.ApplicationContextAware</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.context.ApplicationContextAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-13.0" />
+      <point x="670.5" y="127.0" />
+      <point x="598.5347222222222" y="127.0" />
+      <point x="20.25" y="13.0" />
+    </edge>
+    <edge source="org.springframework.web.servlet.FrameworkServlet" target="org.springframework.web.servlet.HttpServletBean">
+      <point x="-39.5" y="-13.0" />
+      <point x="431.6388888888889" y="279.0" />
+      <point x="283.0" y="279.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.web.servlet.HttpServletBean" target="org.springframework.context.EnvironmentAware">
+      <point x="50.33333333333337" y="-13.0" />
+      <point x="333.33333333333337" y="203.0" />
+      <point x="468.0" y="203.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.context.EnvironmentAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-13.0" />
+      <point x="468.0" y="127.0" />
+      <point x="558.0347222222222" y="127.0" />
+      <point x="-20.25" y="13.0" />
+    </edge>
+    <edge source="javax.servlet.http.HttpServlet" target="javax.servlet.GenericServlet">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.web.servlet.HttpServletBean" target="org.springframework.core.env.EnvironmentCapable">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="javax.servlet.GenericServlet" target="javax.servlet.ServletConfig">
+      <point x="36.0" y="-13.0" />
+      <point x="151.5" y="51.0" />
+      <point x="183.5" y="51.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="javax.servlet.GenericServlet" target="javax.servlet.Servlet">
+      <point x="-36.0" y="-13.0" />
+      <point x="79.5" y="51.0" />
+      <point x="47.5" y="51.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.web.servlet.HttpServletBean" target="javax.servlet.http.HttpServlet">
+      <point x="-50.33333333333337" y="-13.0" />
+      <point x="232.66666666666663" y="203.0" />
+      <point x="115.5" y="203.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.web.servlet.FrameworkServlet" target="org.springframework.context.ApplicationContextAware">
+      <point x="39.500000000000014" y="-13.0" />
+      <point x="510.6388888888889" y="279.0" />
+      <point x="670.5" y="279.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="org.springframework.web.servlet.DispatcherServlet" target="org.springframework.web.servlet.FrameworkServlet">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="563.5" y="355.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
