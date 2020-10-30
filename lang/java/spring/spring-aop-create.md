@@ -1,8 +1,193 @@
 spring-aop-create
 
+
+
+### 核心堆栈
+
+postProcessBeforeInstantiation
+
+​	createProxy
+
+​			ProxyFactory.getProxy
+
+​					ProxyCreatorSupport.createAopProxy
+
+​						AopProxyFactory.createAopProxy
+
+​							DefaultAopProxyFactory.createAopProxy
+
+
+
+### 代理类继承结构
+
+![spring aop init](spring-aop-init.png)
+
+
+
+### 注册时机
+
+```java
+public interface BeanPostProcessor {
+    @Nullable
+    default Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+
+    @Nullable
+    default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+}
+
+public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
+    @Nullable
+    default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    default boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
+    }
+
+    default PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
+        return null;
+    }
+
+    /** @deprecated */
+    @Deprecated
+    @Nullable
+    default PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
+        return pvs;
+    }
+}
+```
+
+
+
+在 Spring Bean 初始化的过程中，在 postProcessBeforeInstantiation 和 postProcessAfterInitialization 中通过 createProxy 创建代理类
+
+```java
+public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
+		implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware {
+  @Override
+	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
+		Object cacheKey = getCacheKey(beanClass, beanName);
+		TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
+		if (targetSource != null) {
+			if (StringUtils.hasLength(beanName)) {
+				this.targetSourcedBeans.add(beanName);
+			}
+			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
+			Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
+			this.proxyTypes.put(cacheKey, proxy.getClass());
+			return proxy;
+		}
+
+		return null;
+	}
+	
+  @Override
+	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
+		if (bean != null) {
+			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+				return wrapIfNecessary(bean, beanName, cacheKey);
+			}
+		}
+		return bean;
+	}
+  
+	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+		// Create proxy if we have advice.
+		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+		if (specificInterceptors != DO_NOT_PROXY) {
+			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			Object proxy = createProxy(
+					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+			this.proxyTypes.put(cacheKey, proxy.getClass());
+			return proxy;
+		}
+
+		this.advisedBeans.put(cacheKey, Boolean.FALSE);
+		return bean;
+	}  
+}
+```
+
+
+
+### 创建代理类 createProxy
+
+```java
+	protected Object createProxy(Class<?> beanClass, @Nullable String beanName,
+			@Nullable Object[] specificInterceptors, TargetSource targetSource) {
+
+		if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
+			AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
+		}
+
+		ProxyFactory proxyFactory = new ProxyFactory();
+		proxyFactory.copyFrom(this);
+
+		if (!proxyFactory.isProxyTargetClass()) {
+			if (shouldProxyTargetClass(beanClass, beanName)) {
+				proxyFactory.setProxyTargetClass(true);
+			}
+			else {
+				evaluateProxyInterfaces(beanClass, proxyFactory);
+			}
+		}
+
+		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
+		proxyFactory.addAdvisors(advisors);
+		proxyFactory.setTargetSource(targetSource);
+		customizeProxyFactory(proxyFactory);
+
+		proxyFactory.setFrozen(this.freezeProxy);
+		if (advisorsPreFiltered()) {
+			proxyFactory.setPreFiltered(true);
+		}
+
+		return proxyFactory.getProxy(getProxyClassLoader());
+	}
+```
+
+
+
+### 工厂类创建代理类
+
 Spring 中 AOP的生成核心是 AopProxy
 
 ```java
+public class ProxyFactory extends ProxyCreatorSupport {
+	public Object getProxy(@Nullable ClassLoader classLoader) {
+		return createAopProxy().getProxy(classLoader);
+	}
+}
+
+public class ProxyCreatorSupport extends AdvisedSupport {
+	private AopProxyFactory aopProxyFactory;
+  
+  public ProxyCreatorSupport() {
+		this.aopProxyFactory = new DefaultAopProxyFactory();
+	}
+  
+	public ProxyCreatorSupport(AopProxyFactory aopProxyFactory) {
+		this.aopProxyFactory = aopProxyFactory;
+	}
+  
+	public AopProxyFactory getAopProxyFactory() {
+		return this.aopProxyFactory;
+	}
+
+	protected final synchronized AopProxy createAopProxy() {
+		if (!this.active) {
+			activate();
+		}
+		return getAopProxyFactory().createAopProxy(this);
+	}
+}
+
 public interface AopProxy {
     Object getProxy();
 
@@ -12,21 +197,6 @@ public interface AopProxy {
 public interface AopProxyFactory {
     AopProxy createAopProxy(AdvisedSupport var1) throws AopConfigException;
 }
-
-class AdvisedSupport extends ProxyConfig implements Advised {
-    private static final long serialVersionUID = 2651364800145442165L;
-    public static final TargetSource EMPTY_TARGET_SOURCE;
-    TargetSource targetSource;
-    private boolean preFiltered;
-    AdvisorChainFactory advisorChainFactory;
-    private transient Map<AdvisedSupport.MethodCacheKey, List<Object>> methodCache;
-    private List<Class<?>> interfaces;
-    private List<Advisor> advisors;
-    private Advisor[] advisorArray;
-}
-
-interface Advised
-interface Advisor
 ```
 
 实现类包括CglibAopProxy（ObjenesisCglibAopProxy），JdkDynamicAopProxy。
