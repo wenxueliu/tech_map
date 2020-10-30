@@ -4,27 +4,101 @@ spring-aop-create
 
 ### 核心堆栈
 
+```
 postProcessBeforeInstantiation
-
-​	createProxy
-
-​			ProxyFactory.getProxy
-
-​					ProxyCreatorSupport.createAopProxy
-
-​						AopProxyFactory.createAopProxy
-
-​							DefaultAopProxyFactory.createAopProxy
+	createProxy
+			ProxyFactory.getProxy
+					ProxyCreatorSupport.createAopProxy
+						AopProxyFactory.createAopProxy
+							DefaultAopProxyFactory.createAopProxy
+```
 
 
 
-### 代理类继承结构
+### 类结构
 
 ![spring aop init](spring-aop-init.png)
 
 
 
-### 注册时机
+### 注册
+
+```java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import({AspectJAutoProxyRegistrar.class})
+public @interface EnableAspectJAutoProxy {
+    boolean proxyTargetClass() default false;
+
+    boolean exposeProxy() default false;
+}
+
+class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
+    AspectJAutoProxyRegistrar() {
+    }
+
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry);
+        AnnotationAttributes enableAspectJAutoProxy = AnnotationConfigUtils.attributesFor(importingClassMetadata, EnableAspectJAutoProxy.class);
+        if (enableAspectJAutoProxy != null) {
+            if (enableAspectJAutoProxy.getBoolean("proxyTargetClass")) {
+                AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
+            }
+
+            if (enableAspectJAutoProxy.getBoolean("exposeProxy")) {
+                AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);
+            }
+        }
+
+    }
+}
+
+public abstract class AopConfigUtils {
+	@Nullable
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
+		return registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry, null);
+	}
+
+	@Nullable
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(
+			BeanDefinitionRegistry registry, @Nullable Object source) {
+
+		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
+	}
+  
+  private static BeanDefinition registerOrEscalateApcAsRequired(
+			Class<?> cls, BeanDefinitionRegistry registry, @Nullable Object source) {
+
+		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
+
+		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
+				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
+				int requiredPriority = findPriorityForClass(cls);
+				if (currentPriority < requiredPriority) {
+					apcDefinition.setBeanClassName(cls.getName());
+				}
+			}
+			return null;
+		}
+
+		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
+		beanDefinition.setSource(source);
+		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
+		beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+		registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
+		return beanDefinition;
+	}
+}
+```
+
+
+
+
+
+### 初始化时机
 
 ```java
 public interface BeanPostProcessor {
