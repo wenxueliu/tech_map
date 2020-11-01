@@ -1,30 +1,359 @@
 
 
+### 初始化
+
+1、初始化 server 对象，设置默认值
+
+2、初始化哨兵
+
+3、加载并解析配置  loadServerConfig，覆盖默认值
+
+4、初始化 supervised
+
+6、初始化服务
+
+7、调用 accept 监听客户端请求
 
 
 
+初始化服务
 
-数据类型
+1、初始化 server 属性
+
+2、注册信号处理函数 sigShutdownHandler
+
+3、初始化共享对象。类似 java 的方法区，将常用的数字常量缓存起来
+
+4、设置打开文件数限制
+
+5、初始化 db
+
+6、初始化进程间通信
+
+7、初始化 evict 池
+
+8、创建事件循环
+
+9、集群初始化
+
+10、lua脚本初始化
+
+11、慢日志初始化
+
+12、延迟监控初始化
 
 
 
-支持的五种数据类型
+### 监听请求
 
+在 initServer 中初始化 eventloop
+
+1、创建 eventloop 对象
+
+2、注册时间处理函数 serverCron
+
+3、监听tcp客户端连接事件，每个客户端连接创建一个 client 对象（最多支持 1000 个客户端连接）
+
+4、监听进程间客户端事件，每个客户端连接创建一个 client 对象（最多支持 1000 个客户端连接）
+
+5、注册 beforeSleep 和 afterSleep 
+
+6、aeMain 开始运行
+
+
+
+```java
+    // 创建 eventloop 对象
+		server.el = aeCreateEventLoop(server.maxclients+CONFIG_FDSET_INCR);
+    if (server.el == NULL) {
+        serverLog(LL_WARNING,
+            "Failed creating the event loop. Error message: '%s'",
+            strerror(errno));
+        exit(1);
+    }
+
+		// 监听相关地址和端口
+    if (server.port != 0 &&
+        listenToPort(server.port,server.ipfd,&server.ipfd_count) == C_ERR)
+        exit(1);
+    
+    /* Create the timer callback, this is our way to process many background
+     * operations incrementally, like clients timeout, eviction of unaccessed
+     * expired keys and so forth. */
+    if (aeCreateTimeEvent(server.el, 1, serverCron, NULL, NULL) == AE_ERR) {
+        serverPanic("Can't create event loop timers.");
+        exit(1);
+    }
+
+    /* Create an event handler for accepting new connections in TCP and Unix
+     * domain sockets. */
+    for (j = 0; j < server.ipfd_count; j++) {
+        if (aeCreateFileEvent(server.el, server.ipfd[j], AE_READABLE,
+            acceptTcpHandler,NULL) == AE_ERR)
+            {
+                serverPanic(
+                    "Unrecoverable error creating server.ipfd file event.");
+            }
+    }
+    if (server.sofd > 0 && aeCreateFileEvent(server.el,server.sofd,AE_READABLE,
+        acceptUnixHandler,NULL) == AE_ERR) serverPanic("Unrecoverable error creating server.sofd file event.");
+
+
+    /* Register a readable event for the pipe used to awake the event loop
+     * when a blocked client in a module needs attention. */
+    if (aeCreateFileEvent(server.el, server.module_blocked_pipe[0], AE_READABLE,
+        moduleBlockedClientPipeReadable,NULL) == AE_ERR) {
+            serverPanic(
+                "Error registering the readable event for the module "
+                "blocked clients subsystem.");
+    }    
+
+    aeSetBeforeSleepProc(server.el,beforeSleep);
+    aeSetAfterSleepProc(server.el,afterSleep);
+    aeMain(server.el);
+    aeDeleteEventLoop(server.el);
 ```
-#define OBJ_STRING 0    /* String object. */
-#define OBJ_LIST 1      /* List object. */
-#define OBJ_SET 2       /* Set object. */
-#define OBJ_ZSET 3      /* Sorted set object. */
-#define OBJ_HASH 4      /* Hash object. */
+
+
+
+当有客户端连接到 redis 的时候，触发 acceptTcpHandler 的调用
+
+1、创建 client 对象
+
+2、注册读事件 readQueryFromClient，等待客户端查询请求
+
+3、解析客户端请求，调用对应命令处理函数 processCommand
+
+```c
+void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
+    int cport, cfd, max = MAX_ACCEPTS_PER_CALL;
+    char cip[NET_IP_STR_LEN];
+    UNUSED(el);
+    UNUSED(mask);
+    UNUSED(privdata);
+
+    while(max--) {
+        cfd = anetTcpAccept(server.neterr, fd, cip, sizeof(cip), &cport);
+        if (cfd == ANET_ERR) {
+            if (errno != EWOULDBLOCK)
+                serverLog(LL_WARNING,
+                    "Accepting client connection: %s", server.neterr);
+            return;
+        }
+        serverLog(LL_VERBOSE,"Accepted %s:%d", cip, cport);
+        acceptCommonHandler(cfd,0,cip);
+    }
+}
+
+#define MAX_ACCEPTS_PER_CALL 1000
+static void acceptCommonHandler(int fd, int flags, char *ip) {
+    client *c;
+    if ((c = createClient(fd)) == NULL) {
+        serverLog(LL_WARNING,
+            "Error registering fd event for the new client: %s (fd=%d)",
+            strerror(errno),fd);
+        close(fd); /* May be already closed, just ignore errors */
+        return;
+    }
+    // 省略非关键代码
+    server.stat_numconnections++;
+    c->flags |= flags;
+}
+
+client *createClient(int fd) {
+    client *c = zmalloc(sizeof(client));
+
+    /* passing -1 as fd it is possible to create a non connected client.
+     * This is useful since all the commands needs to be executed
+     * in the context of a client. When commands are executed in other
+     * contexts (for instance a Lua script) we need a non connected client. */
+    if (fd != -1) {
+        anetNonBlock(NULL,fd);
+        anetEnableTcpNoDelay(NULL,fd);
+        if (server.tcpkeepalive)
+            anetKeepAlive(NULL,fd,server.tcpkeepalive);
+        if (aeCreateFileEvent(server.el,fd,AE_READABLE,
+            readQueryFromClient, c) == AE_ERR)
+        {
+            close(fd);
+            zfree(c);
+            return NULL;
+        }
+    }
+
+    selectDb(c,0);
+    //删除无关代码
+    initClientMultiState(c);
+    return c;
+}  
+
+void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
+    client *c = (client*) privdata;
+    readlen = PROTO_IOBUF_LEN;
+ 
+    qblen = sdslen(c->querybuf);
+    if (c->querybuf_peak < qblen) c->querybuf_peak = qblen;
+    c->querybuf = sdsMakeRoomFor(c->querybuf, readlen);
+    nread = read(fd, c->querybuf+qblen, readlen);
+		// 删除无关代码
+    /* Time to process the buffer. If the client is a master we need to
+     * compute the difference between the applied offset before and after
+     * processing the buffer, to understand how much of the replication stream
+     * was actually applied to the master state: this quantity, and its
+     * corresponding part of the replication stream, will be propagated to
+     * the sub-slaves and to the replication backlog. */
+    processInputBufferAndReplicate(c);
+}      
+      
+void processInputBufferAndReplicate(client *c) {
+    if (!(c->flags & CLIENT_MASTER)) {
+        processInputBuffer(c);
+    } else {
+        size_t prev_offset = c->reploff;
+        processInputBuffer(c);
+        size_t applied = c->reploff - prev_offset;
+        if (applied) {
+            replicationFeedSlavesFromMasterStream(server.slaves,
+                    c->pending_querybuf, applied);
+            sdsrange(c->pending_querybuf,applied,-1);
+        }
+    }
+}
+
+void processInputBuffer(client *c) {
+    server.current_client = c;
+
+    /* Keep processing while there is something in the input buffer */
+    while(c->qb_pos < sdslen(c->querybuf)) {
+        // 删除无关代码
+        /* Determine request type when unknown. */
+        if (!c->reqtype) {
+            if (c->querybuf[c->qb_pos] == '*') {
+                c->reqtype = PROTO_REQ_MULTIBULK;
+            } else {
+                c->reqtype = PROTO_REQ_INLINE;
+            }
+        }
+        // 内联命令
+        if (c->reqtype == PROTO_REQ_INLINE) {
+            if (processInlineBuffer(c) != C_OK) break;
+        } else if (c->reqtype == PROTO_REQ_MULTIBULK) {
+            if (processMultibulkBuffer(c) != C_OK) break;
+        } else {
+            serverPanic("Unknown request type");
+        }
+
+        /* Multibulk processing could see a <= 0 length. */
+        if (c->argc == 0) {
+            resetClient(c);
+        } else {
+            /* Only reset the client when the command was executed. */
+            if (processCommand(c) == C_OK) {
+                if (c->flags & CLIENT_MASTER && !(c->flags & CLIENT_MULTI)) {
+                    /* Update the applied replication offset of our master. */
+                    c->reploff = c->read_reploff - sdslen(c->querybuf) + c->qb_pos;
+                }
+
+                /* Don't reset the client structure for clients blocked in a
+                 * module blocking command, so that the reply callback will
+                 * still be able to access the client argv and argc field.
+                 * The client will be reset in unblockClientFromModule(). */
+                if (!(c->flags & CLIENT_BLOCKED) || c->btype != BLOCKED_MODULE)
+                    resetClient(c);
+            }
+            /* freeMemoryIfNeeded may flush slave output buffers. This may
+             * result into a slave, that may be the active client, to be
+             * freed. */
+            if (server.current_client == NULL) break;
+        }
+    }
+  
+      /* Trim to pos */
+    if (server.current_client != NULL && c->qb_pos) {
+        sdsrange(c->querybuf,c->qb_pos,-1);
+        c->qb_pos = 0;
+    }
+
+    server.current_client = NULL;
+}
 ```
 
 
 
+### 命令处理
+
+当有客户端连接请求到来
+
+1、创建 client
+
+2、监听客户端发送的数据
+
+3、收到客户端的数据之后，调用 readQueryFromClient 解析客户端数据到 buffer
+
+4、解析 buffer 中数据，执行对应的命令并返回
 
 
+
+解析命令
+
+1、 参数校验
+
+2、如果是集群模式，将请求路由到对应的节点
+
+4、调用命令处理函数
+
+
+
+```c
+int processCommand(client *c) {
+    // 省略非关键代码，主要为命令行校验
+		/* Exec the command */
+    if (c->flags & CLIENT_MULTI &&
+        c->cmd->proc != execCommand && c->cmd->proc != discardCommand &&
+        c->cmd->proc != multiCommand && c->cmd->proc != watchCommand)
+    {
+        queueMultiCommand(c);
+        addReply(c,shared.queued);
+    } else {
+        call(c,CMD_CALL_FULL);
+        c->woff = server.master_repl_offset;
+        if (listLength(server.ready_keys))
+            handleClientsBlockedOnKeys();
+    }
+    return C_OK;
+}    
+
+
+void call(client *c, int flags) {
+      // 省略非关键代码
+	    updateCachedTime(0);
+    	start = server.ustime;
+    	c->cmd->proc(c);
+    	duration = ustime()-start;
+}
 ```
 
-```
+
+
+### 应答
+
+1、调用 addReply 将 obj 加入 client 的 buf，如果失败，增加到 client 的 reply
+
+2、遍历 server.clients_pending_write 中元素，调用 handleClientsWithPendingWrites（触发时机为 beforeSleep） 将数据发送给客户端。
+
+3、如果还有数据需要发送，server.el 注册对client->fd 的写事件sendReplyToClient，如果可写，就将数据发送出去。
+
+其中应答包括 5 种
+
+1、状态回复：+ 开头，比如 +OK\r\n
+
+2、错误回复：-开头，比如 -ERR unknow command
+
+3、整数回复：:开头，例如:100\r\n
+
+4、批量回复：$开头，例如，比如 \$5\r\nhello\r\rn
+
+5、多条批量回复：*开头，例如 *2\r\n$5\r\nredis\r\n\$2ok\r\n
 
 
 
@@ -38,47 +367,9 @@ multi 开启事务，exec 执行事务。在 multi 到 exec 期间数据可能�
 
 
 
-
-
-
-
-### zset
-
-
-
-充分利用 dict 和 skiplist 的特性
-
-对于 dict 查询需要 O(1)，zrange，zrank 需要 O(N*logN)
-
-对于 skiplist，查询需要 O(logN)，zrange，zrank 需要 O(logN)
-
-
-
-
-
 ### 思考题
 
-
-
-1、OBJECT_ENCODING_EMBSTR 和 OBJ_ENCODING_RAW 都表示简单动态字符串，两种编码的区别是啥？
-
-```c
-typedef struct redisObject {
-    unsigned type:4;
-    unsigned encoding:4;
-    unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or
-                            * LFU data (least significant 8 bits frequency
-                            * and most significant 16 bits access time). */
-    int refcount;
-    void *ptr;
-} robj;
-```
-
-当字符串比较短时，底层使用OBJECT_ENCODING_EMBSTR，robj 和 sds一起分配，连续存储，充分利用cpu高速缓存，提升内存分配效率与数据访问效率。
-
-
-
-2、client 中 reply 和 buf 都用于返回数据，两者的区别是啥？
+1、client 中 reply 和 buf 都用于返回数据，两者的区别是啥？
 
 reply 用于返回
 
@@ -86,7 +377,7 @@ buf 用户返回
 
 
 
-3、对于命令执行，redis 做了哪些优化？
+2、对于命令执行，redis 做了哪些优化？
 
 1. 所有命令保存在数组redisCommandTable中
 2. 初始服务配置时，启动时将所有命令建立 dict 方便 O(1)查找

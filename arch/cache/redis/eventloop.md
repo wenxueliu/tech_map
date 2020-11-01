@@ -467,7 +467,11 @@ static int processTimeEvents(aeEventLoop *eventLoop) {
 
 ### Epoll 的实现
 
+redis 支持 evport，select，kqueue，epoll 四种io 方式，最常用的是 epoll。
+
 epoll 的实现就是对  epoll_create，epoll_ctl和 epoll_wait 的封装。可以作为 epoll 的示例代码。实现很简单，不再赘述。
+
+
 
 
 
