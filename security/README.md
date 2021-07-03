@@ -123,4 +123,8 @@ oauth2.0
 
 ###参考
 
+Apache Shiro
+
+https://blog.wuwii.com/shiro-1.html
+
 ###附录
