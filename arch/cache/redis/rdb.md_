@@ -1,0 +1,115 @@
+redis-rdb
+
+
+
+## 目标
+
+解决宕机导致数据丢失问题
+
+
+
+## 思路
+
+将内存数据写入磁盘持久化
+
+
+
+## 实现
+
+
+
+### RDB
+
+将内存数据持久化到 RDB 文件
+
+加载 RDB文件恢复内存数据
+
+#### 实现方式
+
+#### 手动执行
+
+SAVE：同步方式，阻塞请求
+
+BGSAVE：异步方式，子进程保存
+
+注：
+
+1、BGSAVE 命令执行期间，SAVE 和 BGSAVE 命令都被拒绝。不能执行时因为避免竞争。
+
+2、BGSAVE 命令执行期间，BGREWRITEAOF 被延迟。BGREWRITEAOF 执行期间，BGSAVE 被拒绝。BGSAVE 和 BGREWRITEAOF 不能通知执行只是因为性能考虑。
+
+
+
+#### 定时执行
+
+ServerCron 定时任务
+
+根据配置决定是否触发
+
+```
+save 3600 1
+save 300 100
+save 60 10000
+```
+
+
+
+```c
+struct redisServer {
+  long long dirty;
+  long long dirty_before_bgsave;
+	struct saveparam *saveparams;
+  int saveparamslen;
+  time_t lastsave;
+}
+
+struct saveparm {
+  time_t seconds;
+  int changes;
+}
+```
+
+
+
+```c
+        for (j = 0; j < server.saveparamslen; j++) {
+            struct saveparam *sp = server.saveparams+j;
+
+            /* Save if we reached the given amount of changes,
+             * the given amount of seconds, and if the latest bgsave was
+             * successful or if, in case of an error, at least
+             * CONFIG_BGSAVE_RETRY_DELAY seconds already elapsed. */
+            if (server.dirty >= sp->changes &&
+                server.unixtime-server.lastsave > sp->seconds &&
+                (server.unixtime-server.lastbgsave_try >
+                 CONFIG_BGSAVE_RETRY_DELAY ||
+                 server.lastbgsave_status == C_OK))
+            {
+                serverLog(LL_NOTICE,"%d changes in %d seconds. Saving...",
+                    sp->changes, (int)sp->seconds);
+                rdbSaveInfo rsi, *rsiptr;
+                rsiptr = rdbPopulateSaveInfo(&rsi);
+                rdbSaveBackground(server.rdb_filename,rsiptr);
+                break;
+            }
+        }
+```
+
+
+
+#### 文件格式
+
+rdb 文件格式
+
+
+
+
+
+
+
+
+
+### AOF
+
+
+

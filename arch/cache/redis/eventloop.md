@@ -1,5 +1,39 @@
 eventloop
 
+
+
+
+
+### 运行时
+
+![redis io mode](redis-io-mode.png)
+
+#### 处理流程
+
+1、执行 beforesleep 函数
+
+2、计算下一个时间事件需要等待的毫秒数。如果等待期间有文件事件需要立即执行，立即唤醒执行文件事件。
+
+3、由于超时或者文件事件唤醒，执行 aftersleep 函数
+
+4、如果超时，直接执行时间回调函数（此时 redis 没有请求）
+
+5、如果有文件事件，处理调用对应的文件事件回调函数
+
+说明：
+
+文件事件数据结构为数组：以 fd 为索引。每当时间事件需要执行，根据 fd 以 O(1)的复杂度就找到对应的时间事件回调函数。
+
+时间事件数据结构为双向链表：时间事件分为一次性和定时。对于一次性任务，返回 AE_NOMORE，执行完后从时间事件队列中删除。对于定时任务，返回下次执行时间（下次执行距离当前时间的毫秒数）。
+
+
+
+
+
+
+
+
+
 本文基于 redis  3.5.x 版本
 
 ### EventLoop
@@ -7,7 +41,6 @@ eventloop
 #### 数据结构
 
 ```java
-
 /* A fired event */
 typedef struct aeFiredEvent {
     int fd;
@@ -73,21 +106,9 @@ err:
 
 
 
-#### 处理流程
 
-1、在等待文件事件前执行 beforesleep 函数
 
-2、等待 x 毫秒。x 为下一个时间事件的等待的毫秒数。如果有时间事件需要立即执行，立即唤醒。
 
-3、由于超时或者文件事件唤醒，执行 aftersleep 函数
-
-4、处理文件读事件
-
-5、处理文件写事件
-
-6、执行时间事件。时间事件分为一次性和定时。对于一次性任务，返回 AE_NOMORE，执行完后从时间事件队列中删除。对于定时任务，返回下次执行时间（下次执行距离当前时间的毫秒数）。
-
-![server](server.png)
 
 ```c
 int aeProcessEvents(aeEventLoop *eventLoop, int flags)
@@ -284,18 +305,6 @@ void aeDeleteFileEvent(aeEventLoop *eventLoop, int fd, int mask)
 
 
 
-
-
-
-
-
-
-包括
-
-
-
-
-
 ### 时间事件
 
 
@@ -454,8 +463,10 @@ static int processTimeEvents(aeEventLoop *eventLoop) {
             retval = te->timeProc(eventLoop, id, te->clientData);
             processed++;
             if (retval != AE_NOMORE) {
+                // 重复时间事件
                 aeAddMillisecondsToNow(retval,&te->when_sec,&te->when_ms);
             } else {
+                // 一次性时间事件
                 te->id = AE_DELETED_EVENT_ID;
             }
         }
@@ -470,8 +481,6 @@ static int processTimeEvents(aeEventLoop *eventLoop) {
 redis 支持 evport，select，kqueue，epoll 四种io 方式，最常用的是 epoll。
 
 epoll 的实现就是对  epoll_create，epoll_ctl和 epoll_wait 的封装。可以作为 epoll 的示例代码。实现很简单，不再赘述。
-
-
 
 
 
