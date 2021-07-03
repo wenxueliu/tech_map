@@ -1,5 +1,6 @@
 ### 架构图
 
+https://github.com/bethunebtj/flink_tutorial
 
 
 ### 组件
@@ -33,6 +34,8 @@ rabbitmq
 [Apache Flink](http://flink.apache.org/)
 
 [Spark](http://spark.apache.org/)
+
+https://blog.csdn.net/tanliqing2010/article/details/81482337
 
 [Spark Streaming](http://spark.apache.org/docs/0.7.3/streaming-programming-guide.html)
 
