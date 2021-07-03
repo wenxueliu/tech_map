@@ -102,6 +102,200 @@ try {
 
 
 
+### 事务注册
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(TransactionManagementConfigurationSelector.class)
+public @interface EnableTransactionManagement {
+}
+
+public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement> {
+	@Override
+	protected String[] selectImports(AdviceMode adviceMode) {
+		switch (adviceMode) {
+			case PROXY:
+				return new String[] {AutoProxyRegistrar.class.getName(),
+						ProxyTransactionManagementConfiguration.class.getName()};
+			case ASPECTJ:
+				return new String[] {determineTransactionAspectClass()};
+			default:
+				return null;
+		}
+	}
+
+	private String determineTransactionAspectClass() {
+		return (ClassUtils.isPresent("javax.transaction.Transactional", getClass().getClassLoader()) ?
+				TransactionManagementConfigUtils.JTA_TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME :
+				TransactionManagementConfigUtils.TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME);
+	}
+}
+
+public abstract class AbstractFallbackTransactionAttributeSource implements TransactionAttributeSource {
+  
+	public TransactionAttribute getTransactionAttribute(Method method, @Nullable Class<?> targetClass) {
+		if (method.getDeclaringClass() == Object.class) {
+			return null;
+		}
+
+		// First, see if we have a cached value.
+		Object cacheKey = getCacheKey(method, targetClass);
+		TransactionAttribute cached = this.attributeCache.get(cacheKey);
+		if (cached != null) {
+			// Value will either be canonical value indicating there is no transaction attribute,
+			// or an actual transaction attribute.
+			if (cached == NULL_TRANSACTION_ATTRIBUTE) {
+				return null;
+			}
+			else {
+				return cached;
+			}
+		}
+		else {
+			// We need to work it out.
+			TransactionAttribute txAttr = computeTransactionAttribute(method, targetClass);
+			// Put it in the cache.
+			if (txAttr == null) {
+				this.attributeCache.put(cacheKey, NULL_TRANSACTION_ATTRIBUTE);
+			}
+			else {
+				String methodIdentification = ClassUtils.getQualifiedMethodName(method, targetClass);
+				if (txAttr instanceof DefaultTransactionAttribute) {
+					((DefaultTransactionAttribute) txAttr).setDescriptor(methodIdentification);
+        }
+				this.attributeCache.put(cacheKey, txAttr);
+			}
+			return txAttr;
+		}
+	}
+  
+  protected TransactionAttribute computeTransactionAttribute(Method method, @Nullable Class<?> targetClass) {
+		// Don't allow no-public methods as required.
+		if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
+			return null;
+		}
+
+		// The method may be on an interface, but we need attributes from the target class.
+		// If the target class is null, the method will be unchanged.
+		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
+      
+    //查看方法中是否存在事务声明
+		// First try is the method in the target class.
+		TransactionAttribute txAttr = findTransactionAttribute(specificMethod);
+		if (txAttr != null) {
+			return txAttr;
+		}
+
+		// Second try is the transaction attribute on the target class.
+		txAttr = findTransactionAttribute(specificMethod.getDeclaringClass());
+		if (txAttr != null && ClassUtils.isUserLevelMethod(method)) {
+			return txAttr;
+		}
+    //如果存在接口，则到接口中去寻找
+		if (specificMethod != method) {
+			// Fallback is to look at the original method.
+			txAttr = findTransactionAttribute(method);
+			if (txAttr != null) {
+				return txAttr;
+			}
+			// Last fallback is the class of the original method.
+			txAttr = findTransactionAttribute(method.getDeclaringClass());
+			if (txAttr != null && ClassUtils.isUserLevelMethod(method)) {
+				return txAttr;
+			}
+		}
+		return null;
+	}
+}
+
+public class AnnotationTransactionAttributeSource extends AbstractFallbackTransactionAttributeSource
+		implements Serializable {
+
+	@Override
+	protected TransactionAttribute findTransactionAttribute(Class<?> clazz) {
+		return determineTransactionAttribute(clazz);
+	}
+
+	@Override
+	protected TransactionAttribute findTransactionAttribute(Method method) {
+		return determineTransactionAttribute(method);
+	}
+
+	protected TransactionAttribute determineTransactionAttribute(AnnotatedElement element) {
+		for (TransactionAnnotationParser parser : this.annotationParsers) {
+			TransactionAttribute attr = parser.parseTransactionAnnotation(element);
+			if (attr != null) {
+				return attr;
+			}
+		}
+		return null;
+	}
+}
+```
+
+
+
+@Transactional 注解解析
+
+```java
+public interface TransactionAnnotationParser {
+	default boolean isCandidateClass(Class<?> targetClass) {
+		return true;
+	}
+	TransactionAttribute parseTransactionAnnotation(AnnotatedElement element);
+}
+
+class SpringTransactionAnnotationParser implements TransactionAnnotationParser, Serializable {
+		public TransactionAttribute parseTransactionAnnotation(AnnotatedElement element) {
+		AnnotationAttributes attributes = AnnotatedElementUtils.findMergedAnnotationAttributes(
+				element, Transactional.class, false, false);
+		if (attributes != null) {
+			return parseTransactionAnnotation(attributes);
+		}
+		else {
+			return null;
+		}
+	}
+
+	public TransactionAttribute parseTransactionAnnotation(Transactional ann) {
+		return parseTransactionAnnotation(AnnotationUtils.getAnnotationAttributes(ann, false, false));
+	}
+
+	protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) {
+		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
+
+		Propagation propagation = attributes.getEnum("propagation");
+		rbta.setPropagationBehavior(propagation.value());
+		Isolation isolation = attributes.getEnum("isolation");
+		rbta.setIsolationLevel(isolation.value());
+		rbta.setTimeout(attributes.getNumber("timeout").intValue());
+		rbta.setReadOnly(attributes.getBoolean("readOnly"));
+		rbta.setQualifier(attributes.getString("value"));
+
+		List<RollbackRuleAttribute> rollbackRules = new ArrayList<>();
+		for (Class<?> rbRule : attributes.getClassArray("rollbackFor")) {
+			rollbackRules.add(new RollbackRuleAttribute(rbRule));
+		}
+		for (String rbRule : attributes.getStringArray("rollbackForClassName")) {
+			rollbackRules.add(new RollbackRuleAttribute(rbRule));
+		}
+		for (Class<?> rbRule : attributes.getClassArray("noRollbackFor")) {
+			rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
+		}
+		for (String rbRule : attributes.getStringArray("noRollbackForClassName")) {
+			rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
+		}
+		rbta.setRollbackRules(rollbackRules);
+
+		return rbta;
+	}
+}
+```
+
+
+
 
 
 ### 事务执行
@@ -204,7 +398,7 @@ public interface TransactionAttribute extends TransactionDefinition {
 
 2、注解所在的类被加载为 Bean
 
-3、注解所在的方法为 public。默认行为，实际可配置
+3、注解所在的方法为 public。默认行为，实际可配置。private, final, static 方法都不支持
 
 4、没有被自调用
 

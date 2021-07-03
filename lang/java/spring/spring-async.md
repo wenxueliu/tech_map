@@ -650,3 +650,10 @@ public class AnnotationAsyncExecutionInterceptor extends AsyncExecutionIntercept
 
 以上初始化切面拦截器
 
+
+
+## 参考
+
+https://blog.csdn.net/f641385712/article/details/92797058
+
+https://fangshixiang.blog.csdn.net/article/details/98642777
