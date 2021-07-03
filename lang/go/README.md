@@ -40,6 +40,10 @@ RPC：gRPC-go
 
 Go 模式：Creational、Structrul、Behavioral、Synchronization、Concurrency、Messaging、Stability
 
+### 并发模型
+
+http://dockone.io/article/10491
+
 ####学习建议
 
 如果你已经有其他编程语言的经验：那么建议如下顺序
