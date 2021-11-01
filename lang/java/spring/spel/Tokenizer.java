@@ -11,7 +11,7 @@ import java.util.List;
 class Tokenizer {
     // If this gets changed, it must remain sorted...
     private static final String[] ALTERNATIVE_OPERATOR_NAMES =
-            {"AND", "OR", "NOT"};
+            {"AND", "NOT", "OR"};
 
     private static final byte[] FLAGS = new byte[256];
 
@@ -180,7 +180,7 @@ class Tokenizer {
     }
 
     static void test2() {
-        String expression = "role:develop AND ( group:dev OR group:test ) AND NOT role:system";
+        String expression = "role:develop AND (group:dev OR group:test) AND NOT role:system";
         Tokenizer tokenizer2 = new Tokenizer(expression);
         List<Token> tokens2 = tokenizer2.process();
         tokens2.forEach(System.out::println);

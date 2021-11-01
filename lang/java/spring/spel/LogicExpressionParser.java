@@ -278,10 +278,17 @@ public class LogicExpressionParser {
         String expressionStr = "role:develop AND ( group:dev OR group:test ) AND (NOT role:system)";
         LogicExpressionParser logicExpressionParser = new LogicExpressionParser();
         SpelExpression expression = logicExpressionParser.doParseExpression(expressionStr);
-        System.out.println(expression);
+        System.out.println(expression.getAST().toStringAST());
+    }
+
+    static void test3() {
+        String expressionStr = "role:develop OR ( group:dev OR group:test ) AND (NOT role:system)";
+        LogicExpressionParser logicExpressionParser = new LogicExpressionParser();
+        SpelExpression expression = logicExpressionParser.doParseExpression(expressionStr);
+        System.out.println(expression.getAST().toStringAST());
     }
 
     public static void main(String[] args) {
-        test2();
+        test3();
     }
 }
