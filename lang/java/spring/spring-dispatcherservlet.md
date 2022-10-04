@@ -2,103 +2,6 @@ Spring 初始化
 
 ### Servlet
 
-核心要素
-
-Servlet ：容器声明周期管理
-
-ServletConfig：初始化参数
-
-ServletContext：上下文，由 ServletConfig 提供
-
-ServletRequest：请求相关信息
-
-ServletResponse：应答相关信息
-
-
-
-```java
-public interface Servlet {
-    void init(ServletConfig var1) throws ServletException;
-
-    ServletConfig getServletConfig();
-
-    void service(ServletRequest var1, ServletResponse var2) throws ServletException, IOException;
-
-    String getServletInfo();
-
-    void destroy();
-}
-
-public interface ServletConfig {
-    String getServletName();
-
-    ServletContext getServletContext();
-
-    String getInitParameter(String var1);
-
-    Enumeration<String> getInitParameterNames();
-}
-```
-
-
-
-GenericServlet.java
-
-```java
-public abstract class GenericServlet implements Servlet, ServletConfig, Serializable {
-    private static final long serialVersionUID = 1L;
-    private transient ServletConfig config;
-
-    public GenericServlet() {
-    }
-
-    public void destroy() {
-    }
-
-    public String getInitParameter(String name) {
-        return this.getServletConfig().getInitParameter(name);
-    }
-
-    public Enumeration<String> getInitParameterNames() {
-        return this.getServletConfig().getInitParameterNames();
-    }
-
-    public ServletConfig getServletConfig() {
-        return this.config;
-    }
-
-    public ServletContext getServletContext() {
-        return this.getServletConfig().getServletContext();
-    }
-
-    public String getServletInfo() {
-        return "";
-    }
-
-    public void init(ServletConfig config) throws ServletException {
-        this.config = config;
-        this.init();
-    }
-
-    public void init() throws ServletException {
-    }
-
-    public void log(String msg) {
-        this.getServletContext().log(this.getServletName() + ": " + msg);
-    }
-
-    public void log(String message, Throwable t) {
-        this.getServletContext().log(this.getServletName() + ": " + message, t);
-    }
-
-    public abstract void service(ServletRequest var1, ServletResponse var2) throws ServletException, IOException;
-
-    public String getServletName() {
-        return this.config.getServletName();
-    }
-}
-```
-
 
 
 ![dispatcher servlet](dispatcherservlet.png)
@@ -107,21 +10,60 @@ public abstract class GenericServlet implements Servlet, ServletConfig, Serializ
 
 ### 初始化
 
-1. 构造 SpringApplicationRunListener
-2. 构造 SpringBootExceptionReporter
-3. 初始化 ConfigurableApplicationContext
-   1.  Servlet ： AnnotationConfigServletWebServerApplicationContext
-   2.  REACTIVE：AnnotationConfigReactiveWebServerApplicationContext
-   3.  默认：AnnotationConfigApplicationContext
+1、HttpServletBean 目的是通过  Servlet 的配置可以修改属性
+
+2、FrameworkServlet 初始化了 webApplicationContext
+
+3、DispatcherServlet  初始化 9 大组件。
+
+### 运行态
+
+1、HttpServletBean 没有任何动作
+
+2、FrameworkServlet 请求前后的处理。比如初始化 LocaleContextHolder，RequestContextHolder，发布ServletRequestHandledEvent事件
+
+3、DispatcherServlet 编排9 大组件，处理请求并应答
+
+
+
+## 最佳实践
+
+了解了 Spring  MVC 的处理主流程，对业务开发有啥好处呢？
+
+1、善用 HandlerInterceptor，可以在请求前设置一些属性，在 Controller 方便获取。
+
+2、统一异常处理
+
+3、监听事件 ServletRequestHandledEvent 就可以记录接口日志和耗时
+
+4、使用 LocaleContextHolder 可以方便获取 Locale	
+
+5、使用 RequestContextHolder 可以非常方便获取 request，response，sessoin 对象。
+
+6、flashMap 用户解决重定向问题
+
+7、LocalResolve
+
+8、ThemeResolve
+
+
+
+常见的误区
+
+1、将 Request 注入
+
+2、在每个接口打印请求日志
+
+
+
+## 附录
+
+### 初始化
 
 #### HttpServletBean
 
 ```java
 public abstract class HttpServletBean extends HttpServlet implements EnvironmentCapable, EnvironmentAware {
-
-	/** Logger available to subclasses. */
-	protected final Log logger = LogFactory.getLog(getClass());
-
 	@Nullable
 	private ConfigurableEnvironment environment;
 
@@ -151,8 +93,6 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 
 	@Override
 	public final void init() throws ServletException {
-
-		// Set bean properties from init parameters.
 		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
 		if (!pvs.isEmpty()) {
 			try {
@@ -163,12 +103,6 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 				bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
 				initBeanWrapper(bw);
 				bw.setPropertyValues(pvs, true);
-			}
-			catch (BeansException ex) {
-				if (logger.isErrorEnabled()) {
-					logger.error("Failed to set bean properties on servlet '" + getServletName() + "'", ex);
-				}
-				throw ex;
 			}
 		}
 
@@ -193,29 +127,14 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 ```java
 public abstract class FrameworkServlet extends HttpServletBean implements ApplicationContextAware {
 
-
   // 仅仅初始化了 WebApplicationContext
 	@Override
 	protected final void initServletBean() throws ServletException {
-		getServletContext().log("Initializing Spring " + getClass().getSimpleName() + " '" + getServletName() + "'");
-		if (logger.isInfoEnabled()) {
-			logger.info("Initializing Servlet '" + getServletName() + "'");
-		}
-		long startTime = System.currentTimeMillis();
-
 		try {
       // 初始化 webApplicationContext
 			this.webApplicationContext = initWebApplicationContext();
       // 由子类扩展
 			initFrameworkServlet();
-		}
-		catch (ServletException | RuntimeException ex) {
-			logger.error("Context initialization failed", ex);
-			throw ex;
-		}
-
-		if (logger.isInfoEnabled()) {
-			logger.info("Completed initialization in " + (System.currentTimeMillis() - startTime) + " ms");
 		}
 	}
 
@@ -224,39 +143,29 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 				WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		WebApplicationContext wac = null;
 
+    // 第一种初始化方法
 		if (this.webApplicationContext != null) {
-			// A context instance was injected at construction time -> use it
 			wac = this.webApplicationContext;
 			if (wac instanceof ConfigurableWebApplicationContext) {
 				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) wac;
 				if (!cwac.isActive()) {
-					// The context has not yet been refreshed -> provide services such as
-					// setting the parent context, setting the application context id, etc
 					if (cwac.getParent() == null) {
-						// The context instance was injected without an explicit parent -> set
-						// the root application context (if any; may be null) as the parent
 						cwac.setParent(rootContext);
 					}
 					configureAndRefreshWebApplicationContext(cwac);
 				}
 			}
 		}
+    // 第二种初始化方法
 		if (wac == null) {
-			// No context instance was injected at construction time -> see if one
-			// has been registered in the servlet context. If one exists, it is assumed
-			// that the parent context (if any) has already been set and that the
-			// user has performed any initialization such as setting the context id
 			wac = findWebApplicationContext();
 		}
+    // 第三种初始化方法
 		if (wac == null) {
-			// No context instance is defined for this servlet -> create a local one
 			wac = createWebApplicationContext(rootContext);
 		}
 
 		if (!this.refreshEventReceived) {
-			// Either the context is not a ConfigurableApplicationContext with refresh
-			// support or the context injected at construction time had already been
-			// refreshed -> trigger initial onRefresh manually here.
 			synchronized (this.onRefreshMonitor) {
         // 子类自定义
 				onRefresh(wac);
@@ -264,7 +173,6 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		}
 
 		if (this.publishContext) {
-			// Publish the context as a servlet context attribute.
 			String attrName = getServletContextAttributeName();
 			getServletContext().setAttribute(attrName, wac);
 		}
@@ -280,24 +188,14 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		}
 		WebApplicationContext wac =
 				WebApplicationContextUtils.getWebApplicationContext(getServletContext(), attrName);
-		if (wac == null) {
-			throw new IllegalStateException("No WebApplicationContext found: initializer not registered?");
-		}
 		return wac;
 	}
 
 	protected WebApplicationContext createWebApplicationContext(@Nullable ApplicationContext parent) {
 		Class<?> contextClass = getContextClass();
-		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
-			throw new ApplicationContextException(
-					"Fatal initialization error in servlet with name '" + getServletName() +
-					"': custom WebApplicationContext class [" + contextClass.getName() +
-					"] is not of type ConfigurableWebApplicationContext");
-		}
     // 反射初始化
 		ConfigurableWebApplicationContext wac =
 				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
-
 		wac.setEnvironment(getEnvironment());
 		wac.setParent(parent);
 		String configLocation = getContextConfigLocation();
@@ -305,19 +203,15 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			wac.setConfigLocation(configLocation);
 		}
 		configureAndRefreshWebApplicationContext(wac);
-
 		return wac;
 	}
 
 	protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac) {
 		if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
-			// The application context id is still set to its original default value
-			// -> assign a more useful id based on available information
 			if (this.contextId != null) {
 				wac.setId(this.contextId);
 			}
 			else {
-				// Generate default id...
 				wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX +
 						ObjectUtils.getDisplayString(getServletContext().getContextPath()) + '/' + getServletName());
 			}
@@ -328,9 +222,6 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		wac.setNamespace(getNamespace());
 		wac.addApplicationListener(new SourceFilteringListener(wac, new ContextRefreshListener()));
 
-		// The wac environment's #initPropertySources will be called in any case when the context
-		// is refreshed; do it eagerly here to ensure servlet property sources are in place for
-		// use in any post-processing or initialization that occurs below prior to #refresh
 		ConfigurableEnvironment env = wac.getEnvironment();
 		if (env instanceof ConfigurableWebEnvironment) {
 			((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
@@ -368,53 +259,13 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			Class<?> initializerClass = ClassUtils.forName(className, wac.getClassLoader());
 			Class<?> initializerContextClass =
 					GenericTypeResolver.resolveTypeArgument(initializerClass, ApplicationContextInitializer.class);
-			if (initializerContextClass != null && !initializerContextClass.isInstance(wac)) {
-				throw new ApplicationContextException(String.format(
-						"Could not apply context initializer [%s] since its generic parameter [%s] " +
-						"is not assignable from the type of application context used by this " +
-						"framework servlet: [%s]", initializerClass.getName(), initializerContextClass.getName(),
-						wac.getClass().getName()));
-			}
 			return BeanUtils.instantiateClass(initializerClass, ApplicationContextInitializer.class);
-		}
-		catch (ClassNotFoundException ex) {
-			throw new ApplicationContextException(String.format("Could not load class [%s] specified " +
-					"via 'contextInitializerClasses' init-param", className), ex);
-		}
-	}
-  
-
-
-	private void initContextHolders(HttpServletRequest request,
-			@Nullable LocaleContext localeContext, @Nullable RequestAttributes requestAttributes) {
-
-		if (localeContext != null) {
-			LocaleContextHolder.setLocaleContext(localeContext, this.threadContextInheritable);
-		}
-		if (requestAttributes != null) {
-			RequestContextHolder.setRequestAttributes(requestAttributes, this.threadContextInheritable);
-		}
-	}
-  
-	private void publishRequestHandledEvent(HttpServletRequest request, HttpServletResponse response,
-			long startTime, @Nullable Throwable failureCause) {
-
-		if (this.publishEvents && this.webApplicationContext != null) {
-			// Whether or not we succeeded, publish an event.
-			long processingTime = System.currentTimeMillis() - startTime;
-			this.webApplicationContext.publishEvent(
-					new ServletRequestHandledEvent(this,
-							request.getRequestURI(), request.getRemoteAddr(),
-							request.getMethod(), getServletConfig().getServletName(),
-							WebUtils.getSessionId(request), getUsernameForRequest(request),
-							processingTime, failureCause, response.getStatus()));
 		}
 	}
   
   protected void onRefresh(ApplicationContext context) {
 		// For subclasses: do nothing by default.
 	}
-
 }
 ```
 
@@ -437,19 +288,17 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 	}
 	
-	protected void initStrategies(ApplicationContext context) {
-		initMultipartResolver(context);
-		// this.localeResolver = context.getBean(LOCALE_RESOLVER_BEAN_NAME, LocaleResolver.class);
-		initLocaleResolver(context);
-		// 
-		initThemeResolver(context);
-		initHandlerMappings(context);
-		initHandlerAdapters(context);
-		initHandlerExceptionResolvers(context);
-		initRequestToViewNameTranslator(context);
-		initViewResolvers(context);
-		initFlashMapManager(context);
-	}
+  protected void initStrategies(ApplicationContext context) {
+    this.initMultipartResolver(context);
+    this.initLocaleResolver(context);
+    this.initThemeResolver(context);
+    this.initHandlerMappings(context);
+    this.initHandlerAdapters(context);
+    this.initHandlerExceptionResolvers(context);
+    this.initRequestToViewNameTranslator(context);
+    this.initViewResolvers(context);
+    this.initFlashMapManager(context);
+  }
 	
 	private void initMultipartResolver(ApplicationContext context) {
 		this.multipartResolver = context.getBean(MULTIPART_RESOLVER_BEAN_NAME, MultipartResolver.class);
@@ -651,26 +500,15 @@ public class DispatcherServlet extends FrameworkServlet {
   
 	protected Object createDefaultStrategy(ApplicationContext context, Class<?> clazz) {
 		return context.getAutowireCapableBeanFactory().createBean(clazz);
-	}  
-  
+	}
 }
 ```
 
 
 
-### 主流程
-
-1. 用户请求发送到前端控制器DispatcherServlet。
-2. 前端控制器DispatcherServlet接收到请求后，DispatcherServlet会使用HandlerMapping来处理，HandlerMapping会查找到具体进行处理请求的Handler对象。
-3. HandlerMapping找到对应的Handler之后，并不是返回一个Handler原始对象，而是一个Handler执行链，在这个执行链中包括了拦截器和处理请求的Handler。HandlerMapping返回一个执行链给DispatcherServlet。
-4. DispatcherServlet接收到执行链之后，会调用Handler适配器去执行Handler。
-5. Handler适配器执行完成Handler（也就是我们写的Controller）之后会得到一个ModelAndView，并返回给DispatcherServlet。
-6. DispatcherServlet接收到Handler适配器返回的ModelAndView之后，会根据其中的视图名调用视图解析器。
-7. 视图解析器根据逻辑视图名解析成一个真正的View视图，并返回给DispatcherServlet。
-8. DispatcherServlet接收到视图之后，会根据上面的ModelAndView中的model来进行视图中数据的填充，也就是所谓的视图渲染。
-9. 渲染完成之后，DispatcherServlet就可以将结果返回给用户了。
 
 
+### 运行态
 
 #### HttpServlet.java
 
@@ -745,13 +583,14 @@ public abstract class HttpServlet extends GenericServlet {
         } catch (ClassCastException var6) {
             throw new ServletException(lStrings.getString("http.non_http"));
         }
-
         this.service(request, response);
     }
 }
 ```
 
+##### 执行流程
 
+1、一个默认的实现
 
 #### FrameworkServlet
 
@@ -812,31 +651,16 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 
 	protected abstract void doService(HttpServletRequest request, HttpServletResponse response)
 			throws Exception;
-
-  private class RequestBindingInterceptor implements CallableProcessingInterceptor {
-
-		@Override
-		public <T> void preProcess(NativeWebRequest webRequest, Callable<T> task) {
-			HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-			if (request != null) {
-				HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
-				initContextHolders(request, buildLocaleContext(request),
-						buildRequestAttributes(request, response, null));
-			}
-		}
-		@Override
-		public <T> void postProcess(NativeWebRequest webRequest, Callable<T> task, Object concurrentResult) {
-			HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-			if (request != null) {
-				resetContextHolders(request, null, null);
-			}
-		}
-	}
-	
 }
 ```
 
+##### 执行流程
 
+1、请求前的处理
+
+2、请求处理（由子类实现）
+
+3、请求后的处理
 
 #### DispatcherServlet
 
@@ -845,10 +669,6 @@ public class DispatcherServlet extends FrameworkServlet {
 
 	@Override
 	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		logRequest(request);
-
-		// Keep a snapshot of the request attributes in case of an include,
-		// to be able to restore the original attributes after the include.
 		Map<String, Object> attributesSnapshot = null;
 		if (WebUtils.isIncludeRequest(request)) {
 			attributesSnapshot = new HashMap<>();
@@ -974,6 +794,24 @@ public class DispatcherServlet extends FrameworkServlet {
 	
 }
 ```
+
+##### 执行流程
+
+1. 用户请求发送到前端控制器DispatcherServlet。
+2. 前端控制器DispatcherServlet接收到请求后，DispatcherServlet会使用HandlerMapping来处理，HandlerMapping会查找到具体进行处理请求的Handler对象。
+3. HandlerMapping找到对应的Handler之后，并不是返回一个Handler原始对象，而是一个Handler执行链，在这个执行链中包括了拦截器和处理请求的Handler。HandlerMapping返回一个执行链给DispatcherServlet。
+4. DispatcherServlet接收到执行链之后，会调用Handler适配器去执行Handler。
+5. Handler适配器执行完成Handler（也就是我们写的Controller）之后会得到一个ModelAndView，并返回给DispatcherServlet。
+6. DispatcherServlet接收到Handler适配器返回的ModelAndView之后，会根据其中的视图名调用视图解析器。
+7. 视图解析器根据逻辑视图名解析成一个真正的View视图，并返回给DispatcherServlet。
+8. DispatcherServlet接收到视图之后，会根据上面的ModelAndView中的model来进行视图中数据的填充，也就是所谓的视图渲染。
+9. 渲染完成之后，DispatcherServlet就可以将结果返回给用户了。
+
+
+
+
+
+
 
 
 
