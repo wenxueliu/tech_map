@@ -6,7 +6,13 @@
 
 ![spring req res](spring-req-res.png)
 
+
+
+
+
 ### 处理器适配器
+
+详细参考 [HandleAdaptor](spring-handleadapter.md)
 
 1、将 HttpServletRequest，HttpServletResponse 封装为 ServletWebRequest 请求
 
@@ -20,176 +26,14 @@
 
 ```java
 public interface HandlerAdapter {
-    boolean supports(Object var1);
-  	//整个 HTTP 处理的最核心，接收 HttpServletRequest，HttpServletResponse，返回ModelAndView
-    ModelAndView handle(HttpServletRequest var1, HttpServletResponse var2, Object var3) throws Exception;
+  boolean supports(Object var1);
+  	// 整个 HTTP 处理的最核心，接收 HttpServletRequest，HttpServletResponse，返回ModelAndView
+  ModelAndView handle(HttpServletRequest var1, HttpServletResponse var2, Object var3) throws Exception;
 
-    long getLastModified(HttpServletRequest var1, Object var2);
-}
-
-// 典型模板模式的使用
-public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator implements HandlerAdapter, Ordered {
-    @Nullable
-    public final ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return this.handleInternal(request, response, (HandlerMethod)handler);
-    }
-  
-  	@Nullable
-    protected abstract ModelAndView handleInternal(HttpServletRequest var1, HttpServletResponse var2, HandlerMethod var3) throws Exception;
-}
-
-public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean {
-
-    protected ModelAndView handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {    
-        this.checkRequest(request);
-        ModelAndView mav;
-        if (this.synchronizeOnSession) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                Object mutex = WebUtils.getSessionMutex(session);
-                synchronized(mutex) {
-                    mav = this.invokeHandlerMethod(request, response, handlerMethod);
-                }
-            } else {
-                mav = this.invokeHandlerMethod(request, response, handlerMethod);
-            }
-        } else {
-            mav = this.invokeHandlerMethod(request, response, handlerMethod);
-        }
-        if (!response.containsHeader("Cache-Control")) {
-            if (this.getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
-                this.applyCacheSeconds(response, this.cacheSecondsForSessionAttributeHandlers);
-            } else {
-                this.prepareResponse(response);
-            }
-        }
-        return mav;
-    }
-}
-
-    @Nullable
-    protected ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-        // 创建 web 请求
-        ServletWebRequest webRequest = new ServletWebRequest(request, response);
-
-        ModelAndView var15;
-        try {
-            WebDataBinderFactory binderFactory = this.getDataBinderFactory(handlerMethod);
-            // 模型工厂
-            ModelFactory modelFactory = this.getModelFactory(handlerMethod, binderFactory);
-          
-            // 创建方法调用对象
-            ServletInvocableHandlerMethod invocableMethod = this.createInvocableHandlerMethod(handlerMethod);
-            if (this.argumentResolvers != null) {
-               // 设置参数解析器
-              invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
-            }
-
-            if (this.returnValueHandlers != null) {
-              // 设置返回值处理器
-                invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
-            }
-
-            invocableMethod.setDataBinderFactory(binderFactory);
-            invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
-            // 创建 ModelView 容器
-            ModelAndViewContainer mavContainer = new ModelAndViewContainer();
-            mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
-            modelFactory.initModel(webRequest, mavContainer, invocableMethod);
-            mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
-            Object result;
-            // 调用方法
-            invocableMethod.invokeAndHandle(webRequest, mavContainer, new Object[0]);
-            // 封装为 ModelAndView
-            var15 = this.getModelAndView(mavContainer, modelFactory, webRequest);
-        } finally {
-            webRequest.requestCompleted();
-        }
-
-        return var15;
-    }
-
-    private ModelAndView getModelAndView(ModelAndViewContainer mavContainer, ModelFactory modelFactory, NativeWebRequest webRequest) throws Exception {
-        modelFactory.updateModel(webRequest, mavContainer);
-        if (mavContainer.isRequestHandled()) {
-            return null;
-        } else {
-            ModelMap model = mavContainer.getModel();
-            ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, mavContainer.getStatus());
-            return mav;
-        }
-    }
+  long getLastModified(HttpServletRequest var1, Object var2);
 }
 
 
-public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
-   //返回值处理器
-   private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
-  
-   public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer, Object... providedArgs) throws Exception {
-        // 解析参数，并调用对应类的方法
-        Object returnValue = this.invokeForRequest(webRequest, mavContainer, providedArgs);
-        this.setResponseStatus(webRequest);
-        if (returnValue == null) {
-            if (this.isRequestNotModified(webRequest) || this.getResponseStatus() != null || mavContainer.isRequestHandled()) {
-                this.disableContentCachingIfNecessary(webRequest);
-                mavContainer.setRequestHandled(true);
-                return;
-            }
-        } else if (StringUtils.hasText(this.getResponseStatusReason())) {
-            mavContainer.setRequestHandled(true);
-            return;
-        }
-        mavContainer.setRequestHandled(false);
-        try {
-            // 返回值处理
-            this.returnValueHandlers.handleReturnValue(returnValue, this.getReturnValueType(returnValue), mavContainer, webRequest);
-        }
-    }
-}
-
-
-public class InvocableHandlerMethod extends HandlerMethod {
-    private WebDataBinderFactory dataBinderFactory;
-    // 参数解析器
-    private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
-    // 参数名称发现器
-    private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-
-    @Nullable
-    public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer, Object... providedArgs) throws Exception {
-        Object[] args = this.getMethodArgumentValues(request, mavContainer, providedArgs);
-        return this.doInvoke(args);
-    }
-
-    protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer, Object... providedArgs) throws Exception {
-        MethodParameter[] parameters = this.getMethodParameters();
-        if (ObjectUtils.isEmpty(parameters)) {
-            return EMPTY_ARGS;
-        } else {
-            Object[] args = new Object[parameters.length];
-            // 遍历所有参数
-            for(int i = 0; i < parameters.length; ++i) {
-                MethodParameter parameter = parameters[i];
-                parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
-                args[i] = findProvidedArgument(parameter, providedArgs);
-                if (args[i] == null) {
-                    // 参数解析器解析HTTP参数为Java对象
-                    args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
-                }
-            }
-
-            return args;
-        }
-    }
-
-    @Nullable
-    protected Object doInvoke(Object... args) throws Exception {
-        ReflectionUtils.makeAccessible(this.getBridgedMethod());
-        try {
-            return this.getBridgedMethod().invoke(this.getBean(), args);
-        }
-    }
 ```
 
 注：从简化代码的角度，对非核心逻辑进行了删除。
@@ -608,27 +452,7 @@ public class MapMethodProcessor implements HandlerMethodReturnValueHandler {
 
 ![httpconvertor](httpconvertor.png)
 
-```java
-public interface HttpMessageConverter<T> {
-    // 当前转换器是否能将HTTP报文转换为对象类型
-    boolean canRead(Class<?> clazz, MediaType mediaType);
 
-    // 当前转换器是否能将对象类型转换为HTTP报文
-    boolean canWrite(Class<?> clazz, MediaType mediaType);
-
-    // 转换器能支持的HTTP媒体类型
-    List<MediaType> getSupportedMediaTypes();
-
-    // 转换HTTP报文为特定类型
-    T read(Class<? extends T> clazz, HttpInputMessage inputMessage)
-            throws IOException, HttpMessageNotReadableException;
-
-    // 将特定类型对象转换为HTTP报文
-    void write(T t, MediaType contentType, HttpOutputMessage outputMessage)
-            throws IOException, HttpMessageNotWritableException;
-
-}
-```
 
 
 

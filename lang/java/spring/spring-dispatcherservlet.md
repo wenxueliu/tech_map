@@ -817,8 +817,6 @@ public class DispatcherServlet extends FrameworkServlet {
 
 #### HandlerExecutionChain
 
-
-
 ```java
     boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HandlerInterceptor[] interceptors = this.getInterceptors();
@@ -849,14 +847,13 @@ public class DispatcherServlet extends FrameworkServlet {
 
 
 
+#### [HandleMapping](spring-handlemapping.md)
 
+将 HttpServletRequest 转换为 HandlerExecutionChain，其中 HandlerExecutionChain 包括 Handler 和 Interceptor
 
-#### HandleMapping
-
-![handlemapping](handlemapping.png)
+![handlemapping](spring-handlemapping.png)
 
 ```java
-	@Nullable
 	protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
 		if (this.handlerMappings != null) {
 			for (HandlerMapping mapping : this.handlerMappings) {
@@ -869,217 +866,6 @@ public class DispatcherServlet extends FrameworkServlet {
 		return null;
 	}
 ```
-
-
-
-AbstractHandlerMapping.java
-
-```java
-	@Override
-	@Nullable
-	public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
-		Object handler = getHandlerInternal(request);
-		if (handler == null) {
-			handler = getDefaultHandler();
-		}
-		if (handler == null) {
-			return null;
-		}
-		// Bean name or resolved handler?
-		if (handler instanceof String) {
-			String handlerName = (String) handler;
-			handler = obtainApplicationContext().getBean(handlerName);
-		}
-
-		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request);
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("Mapped to " + handler);
-		}
-		else if (logger.isDebugEnabled() && !request.getDispatcherType().equals(DispatcherType.ASYNC)) {
-			logger.debug("Mapped to " + executionChain.getHandler());
-		}
-
-		if (CorsUtils.isCorsRequest(request)) {
-			CorsConfiguration globalConfig = this.corsConfigurationSource.getCorsConfiguration(request);
-			CorsConfiguration handlerConfig = getCorsConfiguration(handler, request);
-			CorsConfiguration config = (globalConfig != null ? globalConfig.combine(handlerConfig) : handlerConfig);
-			executionChain = getCorsHandlerExecutionChain(request, executionChain, config);
-		}
-
-		return executionChain;
-	}
-	
-	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
-		Object handler = lookupHandler(lookupPath, request);
-		if (handler == null) {
-			// We need to care for the default handler directly, since we need to
-			// expose the PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE for it as well.
-			Object rawHandler = null;
-			if ("/".equals(lookupPath)) {
-				rawHandler = getRootHandler();
-			}
-			if (rawHandler == null) {
-				rawHandler = getDefaultHandler();
-			}
-			if (rawHandler != null) {
-				// Bean name or resolved handler?
-				if (rawHandler instanceof String) {
-					String handlerName = (String) rawHandler;
-					rawHandler = obtainApplicationContext().getBean(handlerName);
-				}
-				validateHandler(rawHandler, request);
-				handler = buildPathExposingHandler(rawHandler, lookupPath, lookupPath, null);
-			}
-		}
-		return handler;
-	}
-
-	protected Object lookupHandler(String urlPath, HttpServletRequest request) throws Exception {
-		// Direct match?
-		Object handler = this.handlerMap.get(urlPath);
-		if (handler != null) {
-			// Bean name or resolved handler?
-			if (handler instanceof String) {
-				String handlerName = (String) handler;
-				handler = obtainApplicationContext().getBean(handlerName);
-			}
-			validateHandler(handler, request);
-			return buildPathExposingHandler(handler, urlPath, urlPath, null);
-		}
-
-		// Pattern match?
-		List<String> matchingPatterns = new ArrayList<>();
-		for (String registeredPattern : this.handlerMap.keySet()) {
-			if (getPathMatcher().match(registeredPattern, urlPath)) {
-				matchingPatterns.add(registeredPattern);
-			}
-			else if (useTrailingSlashMatch()) {
-				if (!registeredPattern.endsWith("/") && getPathMatcher().match(registeredPattern + "/", urlPath)) {
-					matchingPatterns.add(registeredPattern +"/");
-				}
-			}
-		}
-
-		String bestMatch = null;
-		Comparator<String> patternComparator = getPathMatcher().getPatternComparator(urlPath);
-		if (!matchingPatterns.isEmpty()) {
-			matchingPatterns.sort(patternComparator);
-			if (logger.isTraceEnabled() && matchingPatterns.size() > 1) {
-				logger.trace("Matching patterns " + matchingPatterns);
-			}
-			bestMatch = matchingPatterns.get(0);
-		}
-		if (bestMatch != null) {
-			handler = this.handlerMap.get(bestMatch);
-			if (handler == null) {
-				if (bestMatch.endsWith("/")) {
-					handler = this.handlerMap.get(bestMatch.substring(0, bestMatch.length() - 1));
-				}
-				if (handler == null) {
-					throw new IllegalStateException(
-							"Could not find handler for best pattern match [" + bestMatch + "]");
-				}
-			}
-			// Bean name or resolved handler?
-			if (handler instanceof String) {
-				String handlerName = (String) handler;
-				handler = obtainApplicationContext().getBean(handlerName);
-			}
-			validateHandler(handler, request);
-			String pathWithinMapping = getPathMatcher().extractPathWithinPattern(bestMatch, urlPath);
-
-			// There might be multiple 'best patterns', let's make sure we have the correct URI template variables
-			// for all of them
-			Map<String, String> uriTemplateVariables = new LinkedHashMap<>();
-			for (String matchingPattern : matchingPatterns) {
-				if (patternComparator.compare(bestMatch, matchingPattern) == 0) {
-					Map<String, String> vars = getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath);
-					Map<String, String> decodedVars = getUrlPathHelper().decodePathVariables(request, vars);
-					uriTemplateVariables.putAll(decodedVars);
-				}
-			}
-			if (logger.isTraceEnabled() && uriTemplateVariables.size() > 0) {
-				logger.trace("URI variables " + uriTemplateVariables);
-			}
-			return buildPathExposingHandler(handler, bestMatch, pathWithinMapping, uriTemplateVariables);
-		}
-
-		// No handler found...
-		return null;
-	}
-
-	protected void validateHandler(Object handler, HttpServletRequest request) throws Exception {
-	}
-
-	protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern,
-			String pathWithinMapping, @Nullable Map<String, String> uriTemplateVariables) {
-
-		HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
-		chain.addInterceptor(new PathExposingHandlerInterceptor(bestMatchingPattern, pathWithinMapping));
-		if (!CollectionUtils.isEmpty(uriTemplateVariables)) {
-			chain.addInterceptor(new UriTemplateVariablesHandlerInterceptor(uriTemplateVariables));
-		}
-		return chain;
-	}
-
-  //HandlerExecutionChain，HandlerInterceptor 之间的关系
-  protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) {
-      HandlerExecutionChain chain = handler instanceof HandlerExecutionChain ? (HandlerExecutionChain)handler : new HandlerExecutionChain(handler);
-      String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
-      Iterator var5 = this.adaptedInterceptors.iterator();
-
-      while(var5.hasNext()) {
-          HandlerInterceptor interceptor = (HandlerInterceptor)var5.next();
-          if (interceptor instanceof MappedInterceptor) {
-              MappedInterceptor mappedInterceptor = (MappedInterceptor)interceptor;
-              if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) {
-                  chain.addInterceptor(mappedInterceptor.getInterceptor());
-              }
-          } else {
-              chain.addInterceptor(interceptor);
-          }
-      }
-
-      return chain;
-  }
-```
-
-
-
-#### HandleAdaptor
-
-
-
-![handleadaptor](handleadaptor.png)
-
-```java
-	protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
-		if (this.handlerAdapters != null) {
-			for (HandlerAdapter adapter : this.handlerAdapters) {
-				if (adapter.supports(handler)) {
-					return adapter;
-				}
-			}
-		}
-		throw new ServletException("No adapter for handler [" + handler +
-				"]: The DispatcherServlet configuration needs to include a HandlerAdapter that supports this handler");
-	}
-```
-
-
-
-HandlerAdapter 与 Handler 通过 support 方法关联
-
-目前支持
-
-1. HttpRequestHandler
-2. HandlerMethod：RequestMappingHandlerAdapter 或 
-3. Controller
-4. Servlet
-
-
 
 
 

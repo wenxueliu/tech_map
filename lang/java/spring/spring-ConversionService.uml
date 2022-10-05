@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.core.convert.ConversionService</OriginalElement>
+  <nodes>
+    <node x="70.0" y="395.0">org.springframework.boot.autoconfigure.web.format.WebConversionService</node>
+    <node x="534.0" y="79.0">org.springframework.core.convert.support.ConfigurableConversionService</node>
+    <node x="0.0" y="316.0">org.springframework.format.support.DefaultFormattingConversionService</node>
+    <node x="865.0" y="237.0">org.springframework.boot.context.properties.bind.BindConverter.TypeConverterConversionService</node>
+    <node x="405.99999999999994" y="316.0">org.springframework.boot.convert.ApplicationConversionService</node>
+    <node x="559.0" y="158.0">org.springframework.core.convert.support.GenericConversionService</node>
+    <node x="222.99999999999994" y="237.0">org.springframework.format.support.FormattingConversionService</node>
+    <node x="890.0" y="79.0">org.springframework.boot.context.properties.bind.BindConverter.CompositeConversionService</node>
+    <node x="764.5" y="0.0">org.springframework.core.convert.ConversionService</node>
+    <node x="559.0" y="237.0">org.springframework.core.convert.support.DefaultConversionService</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.boot.context.properties.bind.BindConverter.CompositeConversionService" target="org.springframework.core.convert.ConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="1043.0" y="54.0" />
+      <point x="926.5" y="54.0" />
+      <point x="54.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.boot.context.properties.bind.BindConverter.TypeConverterConversionService" target="org.springframework.core.convert.support.GenericConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="1038.0" y="212.0" />
+      <point x="797.3333333333333" y="212.0" />
+      <point x="95.33333333333326" y="14.5" />
+    </edge>
+    <edge source="org.springframework.core.convert.support.ConfigurableConversionService" target="org.springframework.core.convert.ConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="702.0" y="54.0" />
+      <point x="818.5" y="54.0" />
+      <point x="-54.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.core.convert.support.DefaultConversionService" target="org.springframework.core.convert.support.GenericConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.format.support.FormattingConversionService" target="org.springframework.core.convert.support.GenericConversionService">
+      <point x="5.6843418860808015E-14" y="-14.5" />
+      <point x="381.0" y="212.0" />
+      <point x="606.6666666666665" y="212.0" />
+      <point x="-95.33333333333337" y="14.5" />
+    </edge>
+    <edge source="org.springframework.boot.autoconfigure.web.format.WebConversionService" target="org.springframework.format.support.DefaultFormattingConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.format.support.DefaultFormattingConversionService" target="org.springframework.format.support.FormattingConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="193.0" y="291.0" />
+      <point x="301.99999999999994" y="291.0" />
+      <point x="-79.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.core.convert.support.GenericConversionService" target="org.springframework.core.convert.support.ConfigurableConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.boot.convert.ApplicationConversionService" target="org.springframework.format.support.FormattingConversionService">
+      <point x="0.0" y="-14.5" />
+      <point x="569.0" y="291.0" />
+      <point x="459.99999999999994" y="291.0" />
+      <point x="79.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="589.0" y="91.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

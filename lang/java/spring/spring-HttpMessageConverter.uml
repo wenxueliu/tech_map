@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.http.converter.HttpMessageConverter</OriginalElement>
+  <nodes>
+    <node x="876.4166666666666" y="79.0">org.springframework.http.converter.AbstractHttpMessageConverter</node>
+    <node x="1170.0833333333333" y="158.0">org.springframework.http.converter.ObjectToStringHttpMessageConverter</node>
+    <node x="210.5" y="237.0">org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter</node>
+    <node x="844.0833333333333" y="158.0">org.springframework.http.converter.StringHttpMessageConverter</node>
+    <node x="1222.4166666666665" y="79.0">org.springframework.http.converter.FormHttpMessageConverter</node>
+    <node x="822.0" y="237.0">org.springframework.http.converter.json.AbstractJsonHttpMessageConverter</node>
+    <node x="0.0" y="316.0">org.springframework.http.converter.json.MappingJackson2HttpMessageConverter</node>
+    <node x="900.25" y="0.0">org.springframework.http.converter.HttpMessageConverter</node>
+    <node x="862.0" y="316.0">org.springframework.http.converter.json.GsonHttpMessageConverter</node>
+    <node x="428.08333333333326" y="158.0">org.springframework.http.converter.AbstractGenericHttpMessageConverter</node>
+    <node x="416.0" y="316.0">org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter</node>
+    <node x="369.08333333333326" y="79.0">org.springframework.http.converter.GenericHttpMessageConverter</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.http.converter.StringHttpMessageConverter" target="org.springframework.http.converter.AbstractHttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="997.0833333333333" y="133.0" />
+      <point x="1039.4166666666665" y="133.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.FormHttpMessageConverter" target="org.springframework.http.converter.HttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="1365.4166666666665" y="54.0" />
+      <point x="1105.25" y="54.0" />
+      <point x="82.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.GenericHttpMessageConverter" target="org.springframework.http.converter.HttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="527.0833333333333" y="54.0" />
+      <point x="941.25" y="54.0" />
+      <point x="-82.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter" target="org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="629.0" y="291.0" />
+      <point x="515.0" y="291.0" />
+      <point x="101.5" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.json.GsonHttpMessageConverter" target="org.springframework.http.converter.json.AbstractJsonHttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" target="org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="198.0" y="291.0" />
+      <point x="312.0" y="291.0" />
+      <point x="-101.5" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.AbstractGenericHttpMessageConverter" target="org.springframework.http.converter.AbstractHttpMessageConverter">
+      <point x="99.0" y="-14.5" />
+      <point x="725.0833333333333" y="133.0" />
+      <point x="930.7499999999999" y="133.0" />
+      <point x="-108.66666666666674" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.AbstractGenericHttpMessageConverter" target="org.springframework.http.converter.GenericHttpMessageConverter">
+      <point x="-99.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter" target="org.springframework.http.converter.AbstractGenericHttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="413.5" y="212.0" />
+      <point x="527.0833333333333" y="212.0" />
+      <point x="-99.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.ObjectToStringHttpMessageConverter" target="org.springframework.http.converter.AbstractHttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="1363.0833333333333" y="133.0" />
+      <point x="1148.0833333333335" y="133.0" />
+      <point x="108.66666666666674" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.json.AbstractJsonHttpMessageConverter" target="org.springframework.http.converter.AbstractGenericHttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="1005.0" y="212.0" />
+      <point x="725.0833333333333" y="212.0" />
+      <point x="99.0" y="14.5" />
+    </edge>
+    <edge source="org.springframework.http.converter.AbstractHttpMessageConverter" target="org.springframework.http.converter.HttpMessageConverter">
+      <point x="0.0" y="-14.5" />
+      <point x="1039.4166666666665" y="54.0" />
+      <point x="1023.25" y="54.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7515375153751538" x="793.0" y="172.5" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
