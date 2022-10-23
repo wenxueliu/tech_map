@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.catalina.util.LifecycleBase</OriginalElement>
+  <nodes>
+    <node x="1205.0" y="287.0">org.apache.catalina.core.StandardEngine</node>
+    <node x="410.25" y="0.0">org.apache.catalina.Lifecycle</node>
+    <node x="597.0" y="188.0">org.apache.catalina.util.LifecycleBase</node>
+    <node x="1027.4166666666665" y="188.0">org.apache.catalina.Wrapper</node>
+    <node x="617.0" y="287.0">org.apache.catalina.connector.Connector</node>
+    <node x="431.0" y="287.0">org.apache.catalina.core.StandardHost</node>
+    <node x="1244.25" y="188.0">org.apache.catalina.Engine</node>
+    <node x="879.9166666666667" y="188.0">org.apache.catalina.Context</node>
+    <node x="225.0" y="287.0">org.apache.catalina.core.StandardServer</node>
+    <node x="9.0" y="287.0">org.apache.catalina.core.StandardService</node>
+    <node x="470.0833333333333" y="188.0">org.apache.catalina.Host</node>
+    <node x="943.6666666666666" y="79.0">org.apache.catalina.Container</node>
+    <node x="989.0" y="287.0">org.apache.catalina.core.StandardWrapper</node>
+    <node x="773.0" y="287.0">org.apache.catalina.core.StandardContext</node>
+    <node x="0.0" y="79.0">org.apache.catalina.Service</node>
+    <node x="218.5" y="79.0">org.apache.catalina.Server</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.catalina.util.LifecycleBase" target="org.apache.catalina.Lifecycle">
+      <point x="0.0" y="-14.5" />
+      <point x="685.0" y="128.0" />
+      <point x="654.3333333333334" y="128.0" />
+      <point x="654.3333333333334" y="59.0" />
+      <point x="495.25" y="59.0" />
+      <point x="17.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Container" target="org.apache.catalina.Lifecycle">
+      <point x="-1.1368683772161603E-13" y="-14.5" />
+      <point x="1011.6666666666665" y="49.0" />
+      <point x="529.25" y="49.0" />
+      <point x="51.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.connector.Connector" target="org.apache.catalina.util.LifecycleBase">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Context" target="org.apache.catalina.Container">
+      <point x="0.0" y="-14.5" />
+      <point x="937.9166666666667" y="168.0" />
+      <point x="1003.1666666666666" y="168.0" />
+      <point x="-8.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardServer" target="org.apache.catalina.Server">
+      <point x="-46.5" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardEngine" target="org.apache.catalina.util.LifecycleBase">
+      <point x="-62.0" y="-14.5" />
+      <point x="1236.0" y="247.0" />
+      <point x="760.4285714285714" y="247.0" />
+      <point x="75.42857142857144" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardEngine" target="org.apache.catalina.Container">
+      <point x="62.0" y="-14.5" />
+      <point x="1360.75" y="138.0" />
+      <point x="1071.1666666666665" y="138.0" />
+      <point x="59.499999999999886" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardWrapper" target="org.apache.catalina.Wrapper">
+      <point x="0.0" y="-14.5" />
+      <point x="1087.0" y="267.0" />
+      <point x="1085.4166666666665" y="267.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Host" target="org.apache.catalina.Container">
+      <point x="0.0" y="-14.5" />
+      <point x="513.0833333333333" y="148.0" />
+      <point x="969.1666666666666" y="148.0" />
+      <point x="-42.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Wrapper" target="org.apache.catalina.Container">
+      <point x="0.0" y="-14.5" />
+      <point x="1085.4166666666665" y="168.0" />
+      <point x="1020.1666666666666" y="168.0" />
+      <point x="8.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardServer" target="org.apache.catalina.util.LifecycleBase">
+      <point x="46.5" y="-14.5" />
+      <point x="364.5" y="257.0" />
+      <point x="634.7142857142858" y="257.0" />
+      <point x="-50.28571428571422" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardHost" target="org.apache.catalina.Container">
+      <point x="-55.33333333333337" y="-14.5" />
+      <point x="458.66666666666663" y="237.0" />
+      <point x="432.6159420289855" y="237.0" />
+      <point x="432.6159420289855" y="138.0" />
+      <point x="952.1666666666666" y="138.0" />
+      <point x="-59.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardService" target="org.apache.catalina.Service">
+      <point x="-49.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Server" target="org.apache.catalina.Lifecycle">
+      <point x="0.0" y="-14.5" />
+      <point x="271.5" y="59.0" />
+      <point x="461.25" y="59.0" />
+      <point x="-17.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardHost" target="org.apache.catalina.util.LifecycleBase">
+      <point x="55.33333333333337" y="-14.5" />
+      <point x="569.3333333333334" y="267.0" />
+      <point x="659.8571428571429" y="267.0" />
+      <point x="-25.14285714285711" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardWrapper" target="org.apache.catalina.util.LifecycleBase">
+      <point x="-65.33333333333326" y="-14.5" />
+      <point x="1021.6666666666667" y="257.0" />
+      <point x="735.2857142857143" y="257.0" />
+      <point x="50.285714285714334" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Service" target="org.apache.catalina.Lifecycle">
+      <point x="0.0" y="-14.5" />
+      <point x="58.0" y="49.0" />
+      <point x="427.25" y="49.0" />
+      <point x="-51.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardContext" target="org.apache.catalina.util.LifecycleBase">
+      <point x="-65.33333333333326" y="-14.5" />
+      <point x="805.6666666666667" y="267.0" />
+      <point x="710.1428571428572" y="267.0" />
+      <point x="25.142857142857224" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardContext" target="org.apache.catalina.Context">
+      <point x="65.33333333333337" y="-14.5" />
+      <point x="936.3333333333334" y="267.0" />
+      <point x="937.9166666666667" y="267.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardService" target="org.apache.catalina.util.LifecycleBase">
+      <point x="49.0" y="-14.5" />
+      <point x="156.0" y="247.0" />
+      <point x="609.5714285714286" y="247.0" />
+      <point x="-75.42857142857144" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardEngine" target="org.apache.catalina.Engine">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardContext" target="org.apache.catalina.Container">
+      <point x="0.0" y="-14.5" />
+      <point x="871.0" y="267.0" />
+      <point x="869.4166666666667" y="267.0" />
+      <point x="869.4166666666667" y="158.0" />
+      <point x="986.1666666666666" y="158.0" />
+      <point x="-25.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardHost" target="org.apache.catalina.Host">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.core.StandardWrapper" target="org.apache.catalina.Container">
+      <point x="65.33333333333326" y="-14.5" />
+      <point x="1152.3333333333333" y="267.0" />
+      <point x="1175.090579710145" y="267.0" />
+      <point x="1175.090579710145" y="158.0" />
+      <point x="1037.1666666666665" y="158.0" />
+      <point x="25.499999999999886" y="14.5" />
+    </edge>
+    <edge source="org.apache.catalina.Engine" target="org.apache.catalina.Container">
+      <point x="0.0" y="-14.5" />
+      <point x="1297.25" y="148.0" />
+      <point x="1054.1666666666665" y="148.0" />
+      <point x="42.499999999999886" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.9100637845499645" x="695.5" y="157.99999999999997" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

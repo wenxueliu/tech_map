@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.tomcat.util.net.AprEndpoint</OriginalElement>
+  <nodes>
+    <node x="1390.3791666666666" y="257.0">org.apache.tomcat.util.net.Nio2Endpoint.SocketProcessor</node>
+    <node x="1454.3791666666666" y="158.0">org.apache.tomcat.util.net.Nio2Endpoint</node>
+    <node x="794.0" y="257.0">org.apache.tomcat.util.net.NioEndpoint.Poller</node>
+    <node x="949.0" y="158.0">org.apache.tomcat.util.net.SocketProcessorBase</node>
+    <node x="1060.0" y="79.0">org.apache.tomcat.util.net.AbstractJsseEndpoint</node>
+    <node x="1080.0" y="0.0">org.apache.tomcat.util.net.AbstractEndpoint</node>
+    <node x="0.0" y="257.0">org.apache.tomcat.util.net.AprEndpoint.Poller</node>
+    <node x="511.49999999999994" y="158.0">org.apache.tomcat.util.net.SocketWrapperBase</node>
+    <node x="1863.8791666666666" y="79.0">org.apache.tomcat.util.net.AbstractEndpoint.Handler</node>
+    <node x="1813.8791666666666" y="158.0">org.apache.coyote.AbstractProtocol.ConnectionHandler</node>
+    <node x="568.0" y="257.0">org.apache.tomcat.util.net.NioEndpoint.NioSocketWrapper</node>
+    <node x="63.67083333333335" y="158.0">org.apache.tomcat.util.net.AprEndpoint</node>
+    <node x="1667.8791666666666" y="158.0">org.apache.tomcat.util.net.Acceptor</node>
+    <node x="1136.0" y="257.0">org.apache.tomcat.util.net.Nio2Endpoint.Nio2SocketWrapper</node>
+    <node x="352.0" y="257.0">org.apache.tomcat.util.net.AprEndpoint.SocketProcessor</node>
+    <node x="769.0" y="158.0">org.apache.tomcat.util.net.NioEndpoint</node>
+    <node x="1606.3791666666666" y="257.0">org.apache.tomcat.util.net.Nio2Endpoint.Nio2Acceptor</node>
+    <node x="126.0" y="257.0">org.apache.tomcat.util.net.AprEndpoint.AprSocketWrapper</node>
+    <node x="920.0" y="257.0">org.apache.tomcat.util.net.NioEndpoint.SocketProcessor</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.tomcat.util.net.AprEndpoint.SocketProcessor" target="org.apache.tomcat.util.net.SocketProcessorBase">
+      <point x="49.0" y="-14.5" />
+      <point x="499.0" y="237.0" />
+      <point x="988.3333333333333" y="237.0" />
+      <point x="-78.66666666666663" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint.SocketProcessor" target="org.apache.tomcat.util.net.SocketProcessorBase">
+      <point x="-49.0" y="-14.5" />
+      <point x="1439.3791666666666" y="207.0" />
+      <point x="1145.6666666666665" y="207.0" />
+      <point x="78.66666666666663" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AprEndpoint.SocketProcessor" target="org.apache.tomcat.util.net.AprEndpoint">
+      <point x="-49.0" y="-14.5" />
+      <point x="401.0" y="217.0" />
+      <point x="193.67083333333335" y="217.0" />
+      <point x="52.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.coyote.AbstractProtocol.ConnectionHandler" target="org.apache.tomcat.util.net.AbstractEndpoint.Handler">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AbstractEndpoint.Handler" target="org.apache.tomcat.util.net.AbstractEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="1921.8791666666666" y="54.0" />
+      <point x="1251.6666666666667" y="54.0" />
+      <point x="68.66666666666674" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AprEndpoint.AprSocketWrapper" target="org.apache.tomcat.util.net.SocketWrapperBase">
+      <point x="51.5" y="-14.5" />
+      <point x="280.5" y="227.0" />
+      <point x="547.5" y="227.0" />
+      <point x="-72.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AprEndpoint.Poller" target="org.apache.tomcat.util.net.AprEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="53.0" y="237.0" />
+      <point x="89.67083333333335" y="237.0" />
+      <point x="-52.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint.Nio2SocketWrapper" target="org.apache.tomcat.util.net.Nio2Endpoint">
+      <point x="54.0" y="-14.5" />
+      <point x="1298.0" y="237.0" />
+      <point x="1482.0458333333333" y="237.0" />
+      <point x="-55.333333333333314" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.NioEndpoint" target="org.apache.tomcat.util.net.AbstractJsseEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="847.0" y="133.0" />
+      <point x="1121.5" y="133.0" />
+      <point x="-61.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.NioEndpoint.SocketProcessor" target="org.apache.tomcat.util.net.SocketProcessorBase">
+      <point x="49.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.NioEndpoint.SocketProcessor" target="org.apache.tomcat.util.net.NioEndpoint">
+      <point x="-49.0" y="-14.5" />
+      <point x="969.0" y="227.0" />
+      <point x="899.0" y="227.0" />
+      <point x="52.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.NioEndpoint.NioSocketWrapper" target="org.apache.tomcat.util.net.SocketWrapperBase">
+      <point x="-51.5" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AprEndpoint.AprSocketWrapper" target="org.apache.tomcat.util.net.AprEndpoint">
+      <point x="-51.5" y="-14.5" />
+      <point x="177.5" y="237.0" />
+      <point x="141.67083333333335" y="237.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.NioEndpoint.Poller" target="org.apache.tomcat.util.net.NioEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint.Nio2Acceptor" target="org.apache.tomcat.util.net.Nio2Endpoint">
+      <point x="-41.5" y="-14.5" />
+      <point x="1647.8791666666666" y="237.0" />
+      <point x="1592.7125" y="237.0" />
+      <point x="55.33333333333337" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AprEndpoint" target="org.apache.tomcat.util.net.AbstractEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="141.67083333333335" y="54.0" />
+      <point x="1114.3333333333333" y="54.0" />
+      <point x="-68.66666666666663" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint.Nio2SocketWrapper" target="org.apache.tomcat.util.net.SocketWrapperBase">
+      <point x="-54.0" y="-14.5" />
+      <point x="1190.0" y="217.0" />
+      <point x="691.5" y="217.0" />
+      <point x="72.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint.Nio2Acceptor" target="org.apache.tomcat.util.net.Acceptor">
+      <point x="41.5" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.AbstractJsseEndpoint" target="org.apache.tomcat.util.net.AbstractEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.NioEndpoint.NioSocketWrapper" target="org.apache.tomcat.util.net.NioEndpoint">
+      <point x="51.5" y="-14.5" />
+      <point x="722.5" y="227.0" />
+      <point x="795.0" y="227.0" />
+      <point x="-52.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint" target="org.apache.tomcat.util.net.AbstractJsseEndpoint">
+      <point x="0.0" y="-14.5" />
+      <point x="1537.3791666666666" y="133.0" />
+      <point x="1244.5" y="133.0" />
+      <point x="61.5" y="14.5" />
+    </edge>
+    <edge source="org.apache.tomcat.util.net.Nio2Endpoint.SocketProcessor" target="org.apache.tomcat.util.net.Nio2Endpoint">
+      <point x="49.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="690.5" y="128.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
