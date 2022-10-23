@@ -37,6 +37,7 @@ https://www.codesheep.cn/2019/01/08/springbt-guava/
 https://www.codesheep.cn/
 https://my.oschina.net/liughDevelop
 https://www.cnblogs.com/hujunzheng/category/598702.html
+https://mingyang.blog.csdn.net
 
 
 spring cloud
@@ -55,3 +56,6 @@ https://blog.csdn.net/MrSpirit/article/details/80347876
 
 鉴权
 https://segmentfault.com/a/1190000009164779
+
+综合
+https://juejin.cn/user/430664257374270
