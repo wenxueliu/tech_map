@@ -2,11 +2,32 @@ spring-bean-scope
 
 
 
-## singleton 作用域
+## 目的
+
+控制 Bean 的实例化范围
 
 
 
-## prototype 作用域
+## 设计
+
+
+
+![bean scope](Scope.png)
+
+
+
+
+
+| 类型              | 对象                | 实现说明                                            |
+| ----------------- | ------------------- | --------------------------------------------------- |
+| @Singleton        |                     | 一个 BeanFactory 有且仅有一个实例                   |
+| @Prototype        |                     | 每次依赖查找和依赖注入生成新 Bean 对象              |
+| @RequestScope     | RequestScope        | 保存在 RequestAttributes中，范围 request            |
+| @SessionScope     | SessionScope        | 保存在 RequestAttributes中，范围 session，线程安全  |
+| @ApplicationScope | ServletContextScope | 保存在 ServletContextScope                          |
+| Thread            | SimpleThreadScope   | ThreadLocal 的方式存储。每个 Thread 维护一个 map    |
+| @RefreshScope     | RefreshScope        | bean + Runnable 保存在 Lock + ConcurrenntHashMap 中 |
+| Thread            | ThreadScope         | bean + Runnable 保存在 Lock + ThreadLocal 中        |
 
 
 
@@ -16,27 +37,7 @@ Spring 容器没有办法管理 prototype Bean 的完整生命周期，也没有
 
 在。销毁回调方法将不会执行，可以利用 BeanPostProcessor 进行清扫工作。 
 
-## request 作用域
-
-
-
-## session 作用域
-
-
-
-## application 作用域
-
-
-
-
-
-
-
-
-
-## 自定义作用域
-
-
+​	
 
 ## 原理解析
 

@@ -510,9 +510,69 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 ```
 
-先添加全局的 @ModelAttribute 方法，后添加类的 @ModelAttribute 方法
 
 
+```java
+  public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod)
+      throws Exception {
+     // @SessionAttribute 注解的参数
+     Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
+     container.mergeAttributes(sessionAttributes);
+     // @ModelAttribute 注解的方法的参数
+     invokeModelAttributeMethods(request, container);
+     // 既包括 @SessionAttribute 又包括 @SessionAttribute 的方法
+     for (String name : findSessionAttributeArguments(handlerMethod)) {
+        if (!container.containsAttribute(name)) {
+           Object value = this.sessionAttributesHandler.retrieveAttribute(request, name);
+           if (value == null) {
+              throw new HttpSessionRequiredException("Expected session attribute '" + name + "'", name);
+           }
+           container.addAttribute(name, value);
+        }
+     }
+  }
+
+	private void invokeModelAttributeMethods(NativeWebRequest request, ModelAndViewContainer container)
+			throws Exception {
+    // modelMethods 为左右包含 @ModelAttribute 注解的方法
+		while (!this.modelMethods.isEmpty()) {
+			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod();
+			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class);
+			Assert.state(ann != null, "No ModelAttribute annotation");
+			if (container.containsAttribute(ann.name())) {
+				if (!ann.binding()) {
+					container.setBindingDisabled(ann.name());
+				}
+				continue;
+			}
+      // 执行 @ModelAttribute 注释的方法
+			Object returnValue = modelMethod.invokeForRequest(request, container);
+			if (!modelMethod.isVoid()){
+				String returnValueName = getNameForReturnValue(returnValue, modelMethod.getReturnType());
+				if (!ann.binding()) {
+					container.setBindingDisabled(returnValueName);
+				}
+				if (!container.containsAttribute(returnValueName)) {
+					container.addAttribute(returnValueName, returnValue);
+				}
+			}
+		}
+	}
+
+	private List<String> findSessionAttributeArguments(HandlerMethod handlerMethod) {
+		List<String> result = new ArrayList<>();
+		for (MethodParameter parameter : handlerMethod.getMethodParameters()) {
+			if (parameter.hasParameterAnnotation(ModelAttribute.class)) {
+				String name = getNameForParameter(parameter);
+				Class<?> paramType = parameter.getParameterType();
+				if (this.sessionAttributesHandler.isHandlerSessionAttribute(name, paramType)) {
+					result.add(name);
+				}
+			}
+		}
+		return result;
+	}
+```
 
 
 
