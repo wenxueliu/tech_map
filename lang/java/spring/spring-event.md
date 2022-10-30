@@ -351,6 +351,18 @@ Spring 对事件的扩展每个点都值得参考学习，抛开 spring 相关�
 
 
 
+### 源码提示
+
+初始化相关操作参考 AbstraceApplication 的 refresh 方法里面的如下方法
+
+```
+prepareBeanFactory()
+initApplicationEventMulticaster()
+registerListeners()
+```
+
+
+
 ### 思考题
 
 1、你觉得 spring 的事件实现还有哪些优化点？
