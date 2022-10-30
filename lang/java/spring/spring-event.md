@@ -4,6 +4,382 @@ spring-event
 
 
 
+Spring Event 是一个典型的观察者模式。
+
+
+
+###  概念
+
+事件：ApplicationEvent
+
+```java
+public abstract class ApplicationEvent extends EventObject {
+	private static final long serialVersionUID = 7099057708183571937L;
+	private final long timestamp;
+
+	public ApplicationEvent(Object source) {
+		super(source);
+		this.timestamp = System.currentTimeMillis();
+	}
+	public final long getTimestamp() {
+		return this.timestamp;
+	}
+}
+```
+
+
+
+监听者：ApplicationListener
+
+```java
+public interface ApplicationListener<E extends ApplicationEvent> extends EventListener {
+	void onApplicationEvent(E event);
+}
+```
+
+
+
+发布者：ApplicationEventPublisher
+
+```java
+public interface ApplicationEventPublisher {
+	default void publishEvent(ApplicationEvent event) {
+		publishEvent((Object) event);
+	}
+	void publishEvent(Object event);
+}
+```
+
+
+
+监听者管理及事件广播：ApplicationEventMulticaster
+
+```java
+public interface ApplicationEventMulticaster {
+	void addApplicationListener(ApplicationListener<?> listener);
+
+	void addApplicationListenerBean(String listenerBeanName);
+
+	void removeApplicationListener(ApplicationListener<?> listener);
+
+	void removeApplicationListenerBean(String listenerBeanName);
+
+	void removeAllListeners();
+
+	void multicastEvent(ApplicationEvent event);
+
+	void multicastEvent(ApplicationEvent event, @Nullable ResolvableType eventType);
+}
+```
+
+
+
+
+
+### Spring 对观察者模式的增强
+
+
+
+#### 事件类型支持泛型
+
+如果事件类型要支持泛型，那么，继承 PayloadApplicationEvent 即可。
+
+```java
+public class PayloadApplicationEvent<T> extends ApplicationEvent implements ResolvableTypeProvider {
+	private final T payload;
+
+	public PayloadApplicationEvent(Object source, T payload) {
+		super(source);
+		this.payload = payload;
+	}
+
+
+	@Override
+	public ResolvableType getResolvableType() {
+		return ResolvableType.forClassWithGenerics(getClass(), ResolvableType.forInstance(getPayload()));
+	}
+
+	public T getPayload() {
+		return this.payload;
+	}
+}
+```
+
+
+
+#### 对事件行为的扩展
+
+1、支持事件类型过滤
+
+2、支持事件顺序
+
+3、支持事件泛型
+
+```java
+public interface SmartApplicationListener extends ApplicationListener<ApplicationEvent>, Ordered {
+	boolean supportsEventType(Class<? extends ApplicationEvent> eventType);
+
+	default boolean supportsSourceType(Class<?> sourceType) {
+		return true;
+	}
+
+	@Override
+	default int getOrder() {
+		return LOWEST_PRECEDENCE;
+	}
+}
+
+public interface GenericApplicationListener extends ApplicationListener<ApplicationEvent>, Ordered {
+	boolean supportsEventType(ResolvableType eventType);
+
+	default boolean supportsSourceType(Class<?> sourceType) {
+		return true;
+	}
+
+	@Override
+	default int getOrder() {
+		return LOWEST_PRECEDENCE;
+	}
+}
+```
+
+默认实现为 GenericApplicationListenerAdapter 利用 ApplicationListener 适配 GenericApplicationListener和SmartApplicationListener
+
+> 适配器模式：用已有 A 行为实现新的 B 行为。
+>
+> 比如，通过 ApplicationListener 实现 GenericApplicationListener。
+
+
+
+#### 统一事件处理
+
+所有类型的事件都可以在一个事件处理器中完成，避免针对不同的事件创建不同的事件类型。
+
+保存类型与其对应的监听器到 Map 结构retrieverCache中。
+
+```java
+public abstract class AbstractApplicationEventMulticaster
+		implements ApplicationEventMulticaster, BeanClassLoaderAware, BeanFactoryAware {
+
+	private final ListenerRetriever defaultRetriever = new ListenerRetriever(false);
+
+	final Map<ListenerCacheKey, ListenerRetriever> retrieverCache = new ConcurrentHashMap<>(64);
+
+	private Object retrievalMutex = this.defaultRetriever;
+
+  private static final class ListenerCacheKey implements Comparable<ListenerCacheKey> {
+
+		private final ResolvableType eventType;
+
+		@Nullable
+		private final Class<?> sourceType;
+}
+```
+
+
+
+
+
+#### 支持异步事件
+
+Spring 对异步事件的支持符合直觉，就是初始化线程池，在线程池执行监听器的行为。支持通过注册 Bean 的方式自定义线程池
+
+```java
+public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster {
+
+  // 设置异步执行器
+ 	private Executor taskExecutor;
+	
+	public void setTaskExecutor(@Nullable Executor taskExecutor) {
+		this.taskExecutor = taskExecutor;
+	}
+	
+	protected Executor getTaskExecutor() {
+		return this.taskExecutor;
+	}
+
+	@Override
+	public void multicastEvent(ApplicationEvent event) {
+		multicastEvent(event, resolveDefaultEventType(event));
+	}
+
+	@Override
+	public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) {
+		ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
+		Executor executor = getTaskExecutor();
+		for (ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+      // 如何设置了执行器，就是异步的。
+			if (executor != null) {
+				executor.execute(() -> invokeListener(listener, event));
+			}
+			else {
+				invokeListener(listener, event);
+			}
+		}
+	}
+}
+```
+
+> 1、异步支持全局异步和局部异步
+>
+> 2、同步事件，如果有一个因为异常失败，会导致其他监听器也无法正常处理事件
+
+#### 支持自定义错误处理
+
+通过定义错误处理器，在发生异常的时候调用错误处理器。
+
+```java
+public interface ErrorHandler {
+	void handleError(Throwable t);
+}
+
+public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster {
+	// 设置错误处理器
+  private ErrorHandler errorHandler;
+
+  protected void invokeListener(ApplicationListener<?> listener, ApplicationEvent event) {
+		ErrorHandler errorHandler = getErrorHandler();
+		if (errorHandler != null) {
+			try {
+				doInvokeListener(listener, event);
+			}
+			catch (Throwable err) {
+				errorHandler.handleError(err);
+			}
+		}	
+		else {
+			doInvokeListener(listener, event);
+		}
+	}
+```
+
+
+
+#### 支持注解创建监听器
+
+支持 @EventListener  注解创建监听器
+
+```java
+
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface EventListener {
+	@AliasFor("classes")
+	Class<?>[] value() default {};
+
+	@AliasFor("value")
+	Class<?>[] classes() default {};
+
+	String condition() default "";
+}
+
+public interface EventListenerFactory {
+	boolean supportsMethod(Method method);
+
+	ApplicationListener<?> createApplicationListener(String beanName, Class<?> type, Method method);
+}
+```
+
+详细实现在 EventListenerMethodProcessor 和 ApplicationListenerMethodAdapter 中。
+
+
+
+#### 层级事件的传播
+
+
+
+#### 事件的传递
+
+
+
+### 可扩展性
+
+1、ApplicationEventMulticaster 的默认实现是 SimpleApplicationEventMulticaster，如果不能满足需求，可以通过注册 Bean 名称为 APPLICATION_EVENT_MULTICASTER_BEAN_NAME 的 Bean 替代默认实现。
+
+2、可以自定义事件类型，只要继承 ApplicationEvent 即可
+
+3、错误处理器和线程池可以自定义
+
+4、
+
+
+
+### 示例
+
+
+
+注册 Listener 的方式
+
+1、通过实现 GenericApplicationListener（或  SmartApplicationListener）
+
+2、通过 @EventListener
+
+3、通过 @Bean 的方式
+
+事件
+
+1、普通类型继承 ApplicationEvent
+
+2、泛型事件继承 PayloadApplicationEvent
+
+自定义  ApplicationEventMulticaster
+
+1、注册 Bean APPLICATION_EVENT_MULTICASTER_BEAN_NAME
+
+2、主动添加
+
+异步事件
+
+1、在 onApplicationEvent 中使用线程池
+
+2、注册类型为 Executor， Bean名为 taskExecutor 的 Bean
+
+> 1、谨慎使用全局的异步处理，建议按需增加 @Async
+>
+> 2、根据事件的规模设置线程池，避免使用默认线程池
+
+自定义错误处理
+
+1、自定义 ErrorHandler 的 Bean
+
+
+
+### 设计思考
+
+Spring 对事件的扩展每个点都值得参考学习，抛开 spring 相关内容，对于实现一个通用的发布订阅有非常大的参考价值。
+
+
+
+### 思考题
+
+1、你觉得 spring 的事件实现还有哪些优化点？
+
+2、基于 Spring Event 你是否可以实现一个通用的事件发布模型？
+
+
+
+### 应用扩展
+
+#### Spring ApplicationEvent 事件
+
+即事件对象为 ApplicationEvent，包括
+
+| 事件                | 流程                                      |
+| ------------------- | ----------------------------------------- |
+| ContextStartedEvent | Spring 应用上下文启动事件，对应 start()   |
+| ContextRefreshEvent | Spring 应用上下文就绪事件，对应 refresh() |
+| ContextStopedEvent  | Spring 应用上下文停止事件，对应 stoped()  |
+| ContextClosedEvent  | Spring 应用上下文关闭事件，对应 closed()  |
+
+#### Spring Boot 事件
+
+#### Spring Cloud 事件
+
+#### Spring 事务事件
+
+
+
 AbstractApplicationContext.java
 
 ```java
