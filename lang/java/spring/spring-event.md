@@ -353,7 +353,7 @@ Spring 对事件的扩展每个点都值得参考学习，抛开 spring 相关�
 
 ### 源码提示
 
-初始化相关操作参考 AbstraceApplication 的 refresh 方法里面的如下方法
+1、初始化相关操作参考 AbstraceApplication 的 refresh 方法里面的如下方法
 
 ```
 prepareBeanFactory()
@@ -361,13 +361,15 @@ initApplicationEventMulticaster()
 registerListeners()
 ```
 
-
+2、EventListenerMethodProcessor：初始化 @EventListener
 
 ### 思考题
 
 1、你觉得 spring 的事件实现还有哪些优化点？
 
 2、基于 Spring Event 你是否可以实现一个通用的事件发布模型？
+
+3、事件发布是线程安全的么？
 
 
 
@@ -391,6 +393,14 @@ registerListeners()
 #### Spring 事务事件
 
 
+
+## 参考
+
+https://www.cnblogs.com/caicz/p/15127904.html
+
+
+
+## 附录
 
 AbstractApplicationContext.java
 
