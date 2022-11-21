@@ -101,6 +101,7 @@ protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable Reques
 * ClientHttpConnector：负责连接的发送与应答接受
 * ExchangeFunction：默认实现了filter 执行和请求发送，应答接受
 * ExchangeFilterFunction：过滤器，可以在请求发送前和收到应答后进行拦截
+* ExchangeStrategies：对编解码进行配置
 * BodyInserter：对Java 对象（作为请求体）转换为 Http 消息，底层依赖 HttpMessageWriter
 * BodyExtrattor：将Http应答体转换为 Java 对象
 * ClientHttpResponse：应答对象
@@ -217,19 +218,6 @@ ReactorClientHttpConnector#connect
 ### 扩展性
 
 1、自定义 ExchangeFilterFunction 对请求和应答进行拦截
-
-
-
-## RestTemplate VS  WebClient
-
-
-
-| 维度     | RestTemplate | WebClient  |
-| -------- | ------------ | ---------- |
-| IO模型   | 阻塞         | 多路复用   |
-| 请求方式 | 同步         | 同步、异步 |
-|          |              |            |
-|          |              |            |
 
 
 
