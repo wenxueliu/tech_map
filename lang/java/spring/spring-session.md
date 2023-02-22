@@ -270,6 +270,7 @@ private final class SessionRepositoryRequestWrapper extends HttpServletRequestWr
          }
       }
       else {
+         // session 过期时，会走到这里
          setAttribute(INVALID_SESSION_ID_ATTR, "true");
       }
       if (!create) {
