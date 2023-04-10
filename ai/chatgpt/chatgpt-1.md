@@ -1,36 +1,88 @@
 
 
-## Chatgpt
 
 
+## ChatGPT
+
+
+
+![nlp 难点](nlp-难点.jpeg)
+
+
+
+![gpt3](gpt3.jpeg)
 
 
 
 ### 概念
 
-LLM
+LLM：Large Language Model
 
-什么是 GPT
 
-chatGPT
 
-GPT
+### 什么是 GPT
 
 
 
 ### 历史
 
+
+
+NLP发展阶段
+
+
+
+![nlp-历史](nlp-历史.jpeg)
+
+
+
+大模型发展
+
+
+
+![LLM-history](LLM-history.jpeg)
+
+
+
+![LLM-Bert](LLM-Bert.jpeg)
+
+
+
+![LLM-GPT](LLM-gpt.jpeg)
+
+![LLM-T5](LLM-T5.jpeg)
+
+
+
+
+
+GPT 发展
+
+
+
+
+
+
+
+![gpt-history1](gpt-history1.jpeg)
+
+
+
+![gpt-history2](gpt-history2.jpeg)
+
+
+
 ![history](gpt-history.png)
 
 
 
-### 原理
+![gpt-参数量](gpt-参数量.jpeg)
 
 
 
-#### GPT
+### GPT 原理
 
-单字接龙
+1、单字接龙
 
 ![单字接龙](单字接龙.jpeg)
 
@@ -40,7 +92,7 @@ GPT
 
 ![训练方式](训练方式.jpeg)
 
-高质量的文本进行训练
+通过海量高质量的文本进行训练，GPT3 的训练数据是 45T，一本100万字的英文书大约1 MB，相当于 4500万本书，美国国家图书馆藏不足 4000万。全世界每年出版 200万本书。高质量的数据消耗完，GPT 能达到怎样的水平？
 
 
 
@@ -50,11 +102,9 @@ GPT
 
 
 
-相同上文
+2、相同上文
 
 ![训练过程](训练过程.jpeg)
-
-
 
 
 
@@ -64,27 +114,57 @@ GPT
 
 
 
-如何回答问题
+3、如何回答问题
 
 ![回答问题](回答问题.jpeg)
-
-
 
 通过问题范例进行训练，能面对同一问题的各种变体，能够回答正确的原因目前是无法解释的。也即涌现。
 
 
 
-
-
-依赖优质种类丰富的大数据
-
+![回答问题-多范例-学习](回答问题-多范例-学习.jpeg)
 
 
 
 
 
+举一反三
 
-#### ChatGPT
+![举一反三-泛化](举一反三-泛化.jpeg)
+
+
+
+
+
+![举一反三-泛化-示例](举一反三-泛化-示例.jpeg)
+
+
+
+
+
+![举一反三-泛化-示例-涌现](举一反三-泛化-示例-涌现.jpeg)
+
+
+
+
+
+与搜索引擎的区别
+
+![与搜索引擎的关系-生成](与搜索引擎的关系-生成.jpeg)
+
+
+
+![与搜索引擎的关系-对比](与搜索引擎的关系-对比.jpeg)
+
+
+
+### ChatGPT 原理
+
+
+
+![chatgpt-难点](chatgpt-难点.jpeg)
+
+
 
 
 
@@ -192,6 +272,12 @@ chatgpt 是星星之火，而燎原之火才刚刚开始，这也是 ChatGPT 的
 
 
 
+### 范式转变
+
+
+
+
+
 ChatGPT 的价值
 
 1、人的的价值 
@@ -222,6 +308,32 @@ ChatGPT 的价值
 
 浏览器插件：https://github.com/chathub-dev/chathub
 
+总结文档  [ChatDOC - Chat with your documents](https://chatdoc.com/) 
+
+### 意义
+
+GPT 的三篇论文加起来的引用数不到 Bert 的一半，由此可知，在 GPT 正式出圈之前，Bert 才是主流方向。因此，chatGPT 是一次机器学习算法的统一，说明统计方法的有效性，从最近各大厂商开始发布各种大模型可知一斑。
+
+
+
+### 思考
+
+隐性的知识
+
+chatGPT 核心在于处理显性的信息，然后输出为知识。因此，显性的，简单的信息处理必然被 chatGPT 替代。那么，chatGPT 可以基于已有信息萃取大量隐性知识和经验吗？
+
+因为显性的知识在整个人类的知识中只是沧海一粟。大量的经验和知识隐藏在人脑中，尤其是越核心的知识和经验，越是在少数人脑中，越不可能从互联网获取。当人工智能和生物技术（比如脑机接口）合二为一的时候，才是人类的悲剧。
+
+关于人类筛选器
+
+创意类工作的核心是对于未知组合的计算量是非常大的，而被称为艺术的作品都是通过人类大量的超长时间的计算而迸发出来的。对于艺术类这种样本不多的情况，Few Shot 是否能生效？
+
+
+
+### 展望
+
+![gpt-future](gpt-future.jpeg)
+
 
 
 
@@ -231,3 +343,9 @@ ChatGPT 的价值
 https://zhuanlan.zhihu.com/p/597264009
 
 https://zhuanlan.zhihu.com/p/597263206
+
+http://pretrain.nlpedia.ai/
+
+https://lifearchitect.ai/
+
+https://www.bilibili.com/video/BV1MY4y1R7EN/
