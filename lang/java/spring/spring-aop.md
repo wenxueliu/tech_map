@@ -49,7 +49,7 @@ AOP就是一种思想，而帮我们解决的是具体的AOP的实现，比如as
 
 - Introduction，引介，用来给一个类型声明额外的方法或属性。就是我可以不用实现另外一个接口，就能使用那个接口的方法。
 
-### 通知类型
+### Advice
 
 Advice是通知，也就是在切面的某个连接点上要执行的动作，也就是我们要编写的增强功能的代码。通知也分为好几种类型，分别有不同作用：
 
@@ -58,6 +58,96 @@ Advice是通知，也就是在切面的某个连接点上要执行的动作，�
 - 异常通知（After throwing advice）：在方法抛出异常退出时执行的通知。
 - 最终通知（After (finally) advice）：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。
 - 环绕通知（Around Advice）：包围一个连接点的通知，如方法调用。这是最强大的一种通知类型。环绕通知可以在方法调用前后完成自定义的行为。它也会选择是否继续执行连接点或直接返回它自己的返回值或抛出异常来结束执行。
+
+
+
+ReflectiveAspectJAdvisorFactory 是 AspectJ 对 AOP 的主要实现。
+
+
+
+![spring-aop-advice](spring-aop-advice.png)
+
+
+
+#### before advice
+
+![spring-aop-beforeadvice](spring-aop-beforeadvice.png)
+
+
+
+```java
+public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeAdvice, Serializable {
+
+	private final MethodBeforeAdvice advice;
+
+	public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) {
+		Assert.notNull(advice, "Advice must not be null");
+		this.advice = advice;
+	}
+
+  // 拦截器实现的关键
+	@Override
+	public Object invoke(MethodInvocation mi) throws Throwable {
+		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis());
+		return mi.proceed();
+	}
+
+}
+```
+
+
+
+#### after advice
+
+![spring-aop-afteradvice](spring-aop-afteradvice.png)
+
+
+
+AfterReturningAdviceInterceptor 是  AfterAdvice 的主要实现
+
+```java
+public class AfterReturningAdviceInterceptor implements MethodInterceptor, AfterAdvice, Serializable {
+	private final AfterReturningAdvice advice;
+
+	public AfterReturningAdviceInterceptor(AfterReturningAdvice advice) {
+		Assert.notNull(advice, "Advice must not be null");
+		this.advice = advice;
+	}
+
+  // 先执行方法，后执行拦截器
+	@Override
+	public Object invoke(MethodInvocation mi) throws Throwable {
+		Object retVal = mi.proceed();
+		this.advice.afterReturning(retVal, mi.getMethod(), mi.getArguments(), mi.getThis());
+		return retVal;
+	}
+
+}
+```
+
+
+
+ThrowAdviceInterceptor 是 ThrowAdvice 的主要实现
+
+```java
+	@Override
+	public Object invoke(MethodInvocation mi) throws Throwable {
+		try {
+			return mi.proceed();
+		}
+		catch (Throwable ex) {
+			Method handlerMethod = getExceptionHandler(ex);
+			if (handlerMethod != null) {
+				invokeHandlerMethod(mi, ex, handlerMethod);
+			}
+			throw ex;
+		}
+	}
+```
+
+注：
+
+> AfterThrowing 的 ex 类型不一致
 
 #### 例子
 
@@ -204,6 +294,153 @@ private void myPointcut4(){}
 
 
 切点指示符可以使用运算符语法进行表达式的混编，如and、or、not（或者&&、||、！）
+
+
+
+
+
+### Joinpoint
+
+![spring-aop-joinpoint](spring-aop-joinpoint.png)
+
+
+
+核心是  ReflectiveMethodInvocation
+
+1、如果有拦截器方法，先执行拦截器方法
+
+2、通过反射执行被拦截方法
+
+```java
+	public Object proceed() throws Throwable {
+    // 递归结束条件，遍历到最后一个元素	
+		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+			return invokeJoinpoint();
+		}
+
+		Object interceptorOrInterceptionAdvice =
+				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
+		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {
+			InterceptorAndDynamicMethodMatcher dm =
+					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
+			Class<?> targetClass = (this.targetClass != null ? this.targetClass : this.method.getDeclaringClass());
+      // 如果匹配，就执行拦截器方法
+			if (dm.methodMatcher.matches(this.method, targetClass, this.arguments)) {
+				return dm.interceptor.invoke(this);
+			}
+			else {
+				// Dynamic matching failed.
+				// Skip this interceptor and invoke the next in the chain.
+				return proceed();
+			}
+		}
+		else {
+      // 执行 MethodInterceptor 的 invoke 方法
+			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
+		}
+	}
+```
+
+
+
+其中 InterceptorAndDynamicMethodMatcher 为
+
+```java
+class InterceptorAndDynamicMethodMatcher {
+	final MethodInterceptor interceptor;
+
+	final MethodMatcher methodMatcher;
+
+	public InterceptorAndDynamicMethodMatcher(MethodInterceptor interceptor, MethodMatcher methodMatcher) {
+		this.interceptor = interceptor;
+		this.methodMatcher = methodMatcher;
+	}
+}
+```
+
+
+
+### Pointcut
+
+比较简单，略过不提
+
+![spring-aop-pointcut](spring-aop-point.png)
+
+
+
+
+
+### PointcutAdvisor 
+
+<img src="spring-aop-advisor.png" alt="spring-aop-advisor" style="zoom:80%;" />
+
+其中
+
+1、AbstractPointcutAdvisor 增加对 Order 的支持
+
+2、AbstractGenericPointcutAdvisor 支持设置 Advice
+
+3、DefaultPointcutAdvisor 支持设置 Pointcut
+
+4、AspectJExpressionPointcutAdvisor 支持 Pointcut 使用 AspectJExpressionPointcut
+
+5、AbstractBeanFactoryPointcutAdvisor 支持 Advice 从 Bean 中读取
+
+6、DefaultBeanFactoryPointcutAdvisor 支持设置 Pointcut
+
+7、AspectJPointcutAdvisor 支持设置 Order、Pointcut和 Advice，其中 Advice 为 AbstractAspectJAdvice。
+
+
+
+AbstractAspectJAdvice 类图如下：
+
+<img src="spring-aop-aspectjadvice.png" alt="spring-aop-aspectjadvice" style="zoom:80%;" />
+
+
+
+
+
+
+
+### IntroductionAdvisor
+
+
+
+
+
+### AdviceAdaptor
+
+实现 Advice 到 MethodInceptor 的适配
+
+![spring-aop-advisor](spring-aop-advisoradapter.png)
+
+其中 xxxxAdviceAdapter 将 advice 转换为 MethodInterceptor
+
+```java
+class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
+
+	@Override
+	public boolean supportsAdvice(Advice advice) {
+		return (advice instanceof MethodBeforeAdvice);
+	}
+
+	@Override
+	public MethodInterceptor getInterceptor(Advisor advisor) {
+		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
+		return new MethodBeforeAdviceInterceptor(advice);
+	}
+}
+```
+
+
+
+![spring-aop-advice-interceptor](spring-aop-advice-interceptor.png)
+
+
+
+AdviceAdaptor 的主要注册在 DefaultAdvisorAdapterRegistry
+
+
 
 ### AOP原理
 

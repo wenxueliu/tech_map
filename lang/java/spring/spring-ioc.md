@@ -17,9 +17,21 @@ http://cxis.me/archives/page/9/
 
 
 
+### 前言
+
+当面对需要创建和连接对象的复杂应用程序时，传统的编程方式往往会导致代码难以维护和扩展。在这样的背景下，控制反转（IOC）设计模式开始出现并得到越来越广泛的认可。
+
+IOC 最早的概念最早出现在 1996 年的《Pattern-Oriented Software Architecture: A System of Patterns》一书中，但当时还没有与之对应的实现框架。随着 Java 技术的不断发展，越来越多的开发者开始意识到 IOC 的优势和重要性，并逐渐发展出了一些基于 IOC 的实现框架。
+
+2002 年，Spring Framework 发布了第一个稳定版本。Spring 是一个轻量级、开放源代码的 Java 框架，主要用于企业级应用的开发。它包含了 IOC 容器、AOP（Aspect-Oriented Programming，面向切面编程）功能等模块，具有非常强大的灵活性和可扩展性，成为了一个非常成功的开源项目。
+
+除了 Spring，其他的 IOC 框架也在陆续涌现。例如 Google Guice、Apache Hivemind 等，它们各自具有独特的特点和优势。同时，IOC 技术也越来越广泛地应用于各种语言和平台中，例如 .NET 平台上的 ASP.NET Core 等。
+
+总的来说，IOC 设计模式已经成为了现代软件开发中必不可少的一部分。通过使用 IOC，可以将应用程序的控制权从代码中解耦出来，提高代码的可维护性、可测试性和灵活性，使得应用程序更易于扩展和修改。
+
+
+
 ### 缘起
-
-
 
 ```java
 public interface LoginService {
@@ -82,6 +94,12 @@ public class LoginController {
 通过反射扫描注解 Autowired，找到对象，查询实现该接口的类，即可完成实例化。
 
 这就是 IoC 的驱动。
+
+
+
+### 什么是 IOC
+
+IOC 是 Inversion of Control（控制反转）的缩写，是一种设计模式，用于将程序中对象之间的依赖关系从代码中解耦出来。在 IOC 模式中，应用程序的控制权被反转，由容器来管理和注入对象之间的依赖关系，而不是由代码直接实例化和管理这些对象。通过使用 IOC，可以提高代码的可维护性、可测试性和灵活性，使得应用程序更易于扩展和修改。常见的 IOC 容器包括 Spring 等。
 
 
 
@@ -185,23 +203,13 @@ Introspector
 
 
 
-
-
-
-
 #### 依赖查找
-
-
 
 根据 Bean 类型查找
 
 单个 Bean 对象
 
 集合 Bean 查找
-
-感觉
-
-
 
 
 
@@ -225,17 +233,51 @@ Spring 应用上下文
 
 查找方式：
 
-1. 根据名称
+1、根据名称
 
-   实时查找
+实时查找
 
-   延时查找
+```
+public class Order {
+    private Product product;
 
-2. 根据类型
+    @Autowired
+    public Order(Product productFactory) {
+        this.productFactory = productFactory;
+    }
 
-   单个Bean 对象
+    public Product getProduct() {
+        return productFactory.getObject();
+    }
+}
+```
 
-   集合 Bean 对象
+
+
+延时查找
+
+```java
+public class Order {
+    private ObjectFactory<Product> productFactory;
+
+    @Autowired
+    public Order(ObjectFactory<Product> productFactory) {
+        this.productFactory = productFactory;
+    }
+
+    public Product getProduct() {
+        return productFactory.getObject();
+    }
+}
+```
+
+
+
+2、根据类型
+
+单个Bean 对象
+
+集合 Bean 对象
 
 #### 实例
 
@@ -553,11 +595,11 @@ public class ApplicationTest {
 
 ### 依赖来源
 
-自定义 Bean
+1、自定义 Bean：业务 Bean
 
-容器内建 Bean 对象
+2、容器内建 Bean 对象：Environment
 
-容器内建依赖：BeanFactory
+3、容器内建依赖：BeanFactory
 
 
 
@@ -567,11 +609,11 @@ public class ApplicationTest {
 
 基于 XML 文件
 
-基于 Properties 文件
+基于 Properties 文件：@PropertySource注解和PropertySourcesPlaceholderConfigurer类来加载和解析properties文件中的配置信息
 
-基于 Java 注解
+基于 Java 注解：@Bean @Configuration @Service @Component
 
-基于 Java API
+基于 Java API：通过 ApplicationContext 的 register 方法实现
 
 #### IoC 容器配置
 
@@ -586,6 +628,36 @@ public class ApplicationTest {
 基于 Java 注解
 
 @Value
+
+
+
+### BeanFactory vs ApplicationContext
+
+BeanFactory 和 ApplicationContext 是 Spring Framework 的两个核心接口。
+
+BeanFactory 是 Spring 的基础设施，提供了完整的 Bean 实例化、配置和管理并提供了基本的面向 Spring 的概念和 API。
+
+ApplicationContext 是 BeanFactory 的子接口，提供了更加强大的功能，包括国际化支持、事件传播、更高级的资源管理等。
+
+其区别在于，ApplicationContext 对 BeanFactory 进行了扩展，拥有更多的企业级功能。
+
+1、AOP：在 AOP 的扩展中，ApplicationContext 实现了自动代理创建和管理，使用 AspectJ 注解和切点表达式进行切面编程，并支持各种 AOP 代理类型。此外，它还提供了 AOP 代理生命周期管理，包括实例化、初始化、代理创建和销毁。
+
+2、国际化：在国际化的扩展中，通过使用 MessageSource 接口来支持不同语言环境下的信息资源管理。可以轻松地添加一个 message properties 文件，根据当前用户的语言环境提供相应的消息。
+
+3、事件： 在事件的扩展中，提供了事件监听器的注册、事件发布、事件监听器的移除等一系列功能，使得我们可以在应用程序中轻松地实现事件驱动模型。
+
+4、应用上下文：在实现特定任务的应用程序上下文实现的扩展主要是针对不同场景提供了特定的 ApplicationContext 实现，例如 Web 应用场景下的 WebApplicationContext，在不同场景下提供了不同的配置和功能支持，方便开发人员进行快速开发。同时也支持开发人员自定义实现以满足特定的业务需求。
+
+5、配置元信息：支持将配置元数据存储在 XML、Java 注解、Java 代码、属性文件中，并提供了多种方式来装载、解析和管理这些配置元数据。它还支持基于环境的配置，使得应用程序可以适应不同的运行环境。
+
+6、资源管理：在资源管理上，可以统一管理应用程序中的资源文件，比如获取类路径下的文件或者 URL、以及访问 JNDI 数据源。此外，ApplicationContext 还提供了对资源文件的监听和缓存机制，以保证资源的有效性和高效性。
+
+7、注解：在注解方面，ApplicationContext 可以扫描标记了特定注解的类，例如 `@Component`、`@Service`、`@Controller` 和 `@Repository` 等等，然后将这些类作为 Spring bean 进行管理。使用这种方式可以在应用程序中更加方便地使用自动装配和依赖注入。
+
+8、Environment 抽象：ApplicationContext 提供了访问环境（Environment）和属性源（property sources）的方法和工具，这使得在应用程序中可以方便地访问属性、配置和其他环境相关的信息。通过 Environment，可以获取属性文件、操作系统变量和其他属性源中的属性值，并且可以根据不同的配置文件创建不同的 ApplicationContext 实例。同时，AnnotationConfigApplicationContext 和 XmlWebApplicationContext 都提供了 setEnvironment() 方法，用于自定义 Environment 实例，以满足不同的环境需求。
+
+从源码实现上， ApplicationContext 组合了 BeanFactory。
 
 ### 对象实例化
 

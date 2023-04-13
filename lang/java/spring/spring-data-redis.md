@@ -1,6 +1,16 @@
 ## Spring Data Redis 介绍
 Spring Data Redis 是属于 Spring Data 下的一个模块，作用就是简化对于 redis 的操做。
 
+### 模块划分
+
+- RedisTemplate：RedisTemplate 是 Spring Data Redis 中最核心的类之一，提供了与 Redis 数据库交互的基本方法，如 get()、set()、incr() 等。它使用序列化器将 key 和 value 转换成二进制数组，并向 Redis 发送命令。
+- StringRedisTemplate：StringRedisTemplate 是 RedisTemplate 的子类，专门用于操作 Redis 中的字符串类型数据。它默认使用 UTF-8 编码来序列化和反序列化字符串数据。
+- RedisRepository：RedisRepository 是 Spring Data Redis 的另一个核心组件，用于简化对 Redis 数据库的 CRUD 操作。它定义了常见的 Redis 数据访问操作，如 save()、findAll()、findById() 等。
+- RedisConnectionFactory：RedisConnectionFactory 是连接 Redis 数据库的工厂类，它会创建连接到 Redis 数据库的 RedisConnection 对象。Spring Data Redis 提供了多种 RedisConnectionFactory 的实现方式，如 JedisConnectionFactory、LettuceConnectionFactory 等。
+- RedisCacheManager：RedisCacheManager 是 Spring 框架提供的缓存管理器，它使用 Redis 作为缓存存储介质。RedisCacheManager 支持多个缓存空间，可以针对不同的数据进行缓存。
+
+
+
 1、提供了一个高度封装的“RedisTemplate”类，里面封装了对于Redis的五种数据结构的各种操作，包括：
  - redisTemplate.opsForValue()：操作字符串
  - redisTemplate.opsForHash()：操作hash
@@ -184,3 +194,13 @@ public interface RedisCallback<T> {
     T doInRedis(RedisConnection var1) throws DataAccessException;
 }
 ```
+
+
+
+
+
+## 附录
+
+
+
+现在你要写一篇关于 Spring Data Redis 原理分析的博客，内容包括模块划分、序列化、反序列化、Lua 脚本，监听器，类型转换器，SessionCallback
