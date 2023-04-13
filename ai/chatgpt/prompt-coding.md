@@ -37,6 +37,18 @@
 
 
 
+## 实例
+
+
+
+```
+I want you act as a ten-years experience java expert, I will describe a project details you will code project with this tool: spring boot, mybatis, redis, mysql, Do not write explanations. My first request is "create a image application. 1. api definition; 2. controller layer include upload image, download image, review image; 3. service layser include ImageService, ImageService include ImageMetaService and ImageStorageService. 4. ImageMetaService include store image metadata in mysql. 5. ImageStorageService upload and download to aliyun oss object storage. 6. all service are two part, include interface and implement. 7. comment for all class, protect and public method, exclude commont for override method; 8. you should care about security image upload and download security; 9. validate the input image should be only jpeg, png; 9. the base package is com.wenxueliu.bizhidao, controller in controller package, service interface in service package, service implement in service.impl package, dao layer in dao package; 10. all class include import dependency; 11. register spring bean add seperate config package; 13. config are yaml config; 14. give the pom config; 15. package with maven; 16. controller and service are constructor initialize"
+```
+
+
+
+
+
 
 
 参考
