@@ -27,6 +27,10 @@ Prompt Templates是一种可复制的生成Prompt的方式，它包含一个文�
 
 
 
+{}
+
+
+
 ### 产品化
 
 [LangChain Hub Prompts](https://huggingface.co/LangChainHub-Prompts)：包含各种各样 Prompt Template 的一个 hub，类似于 docker hub，code hub。
