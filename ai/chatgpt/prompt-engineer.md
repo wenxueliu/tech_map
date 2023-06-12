@@ -161,6 +161,145 @@ gpt3.5 是4096，GPT4分为 GPT-8K 和 GPT-32k，大多数模型为2k左右
 
 ### 示例
 
+Meta-Review 是一个期刊编辑综合不同审稿人意见给出初步评审的过程，这样一个阅读+综合+文本生成的任务很适合大模型的能力特点，假设当下收到三位审稿人的评论分别是R1，R2，R3。在测试大模型的综合能力时，如果不指定系统角色，只进行单轮对话以指定式构建 Prompt，不同级别的 Prompt 如下：
+
+```
+Level 0：<R1，R2，R3>；
+Level 1：通过总结以下评论，编写一个 Meta-Review：<R1，R2，R3>；
+Level 2：通过总结以下评论，编写一个 Meta-Review，要求最终的输出应该强调文章的核心贡献、不同审稿人提到的共同优势/缺点、改进建议以及需要补充的参考文献。评论文本如下：<R1，R2，R3>；
+Level 3：通过回答以下问题编写一个 Meta-Review：（1）根据审稿人的评论，该论文的核心贡献是什么？（2）不同审稿人所提到的共同优势有哪些？（3）不同审稿人所强调的共同缺点是什么？（4）审稿人提供什么建议来改进这篇论文？（5）审稿人提到的缺少的参考文献是什么？评论文本如下：<R1，R2，R3>；
+Level 4：Level 3+请详细解释作出这些选择的原因；
+Level 5：Level 4+请保证表达流畅，并重点强调不同审稿人所提到的共同优势/缺点有哪些，长度不超过400个单词，并且只输出中文（英文）。
+```
+
+Narrative Braiding 也称做多角度叙事，是一种并行讲述多条故事线并要求最终可以汇聚成一体的文学技巧（例如低俗小说中的四个桥段），Narrative Braiding 经常被用于如小说、电影、电视剧的创作之中，这项任务的难点在于既要保证每条故事线充分合理的发展，又要使得不同的故事线可以交叉汇聚到一起，这点对大模型来说也非常有挑战。仍然假定不指定系统角色，只进行单轮对话以指定式表达构建 Prompt，假设当下两条故事线描述分别为<N1，N2>：
+
+```
+Level 0：<N1，N2>；
+Level 1：根据以下备选的故事描述组合编制一个连贯的故事：<N1, N2>；
+Level 2：根据以下备选的故事描述组合编制一个连贯的故事，要求最终的输出应强调两个故事描述中提供的共同信息、每个故事描述中提供的有趣独特的信息以及这些叙述中传达的冲突信息。备选故事描述如下：<N1, N2>；
+Level 3：通过执行以下任务，根据以下备选的故事描述组合编制一个连贯的故事：（1）从两个描述中提取重叠子句对并改写；（2）从每个描述中提取独特的子句并确定其中有趣的段落；（3）提取两个描述中传达的冲突子句对并解决冲突；（4）从重叠-独特-冲突子句中生成段落并将它们合并为单个故事；（5）重新排列合并文档中的句子，编制成详细的连贯故事；（6）将详细故事总结成简洁的 Narrative Braiding。备选故事描述如下：<N1, N2>；
+Level 4：Level 3+请详细解释做出的这些响应是如何包含某些信息并且忽略其他信息的；
+Level 5：Level 4+请保证表达流畅连贯，并突出两个叙述中提供的重叠-独特-冲突信息，长度不超过1000个单词，并且只输出中文（英文）。
+```
+
+工作描述
+
+```
+Level 0: Given the job description separated by <>, extract useful information.\n"
+    prompt <{job_description}>
+Level 1: Given the job description separated by <>, extract useful information. Output job title, company, key skills, and summarized job description.\n"
+    prompt <{job_description}>
+Level 2: Given the job description separated by <>, extract useful information. Output job title, company, key skills as a list separated by commas, " \
+             "and summarized job description (use at least 30 words and focus on day-to-day responsibilities).\n"
+    <{job_description}>
+Level 3: Given the job description separated by <>, extract useful information. 
+                Format your response as JSON with the following structure:
+                {
+                    "job_title": Job title,
+                    "company": Company,
+                    "key_skills": ["list", "of", "key", "skills"],
+                    "job_description": Job summary
+                }
+                For job summary use at least 30 words and focus on day-to-day responsibilities.
+                """)
+    <{job_description}>
+Level 4： Given the job description separated by <>, extract useful information. 
+                Format your response as JSON with the following structure:
+                {
+                    "job_title": Job title,
+                    "company": Company,
+                    "key_skills": ["list", "of", "key", "skills"],
+                    "job_description_summary": Job description summary,
+                    "job_responsibilities_summary": Job responsibilities summary
+                }
+                To effectively complete the summarization, follow these steps:
+                - First, summarize the whole job description and write it as value for "job_description" key
+                - Then, summarize the job description summary with a focus on day-to-day responsibilities
+                
+                For example:
+                
+                '
+                KUBRA is in growth mode and currently seeking a Machine Learning Engineer to join our Data Analytics Team!
+                
+                As a Machine Learning Engineer, you will be working on designing and maintaining the Machine Learning algorithms that will be used to extract value out of our data. The best part? You will also be collaborating with BI Analysts, and Data Engineers to introduce new data on machine learning standards and best practices with KUBRA!
+                
+                What will you be involved in?
+                
+                - Introduce machine learning standards and best practices to KUBRA.
+                - Build scalable machine learning architecture and automate machine learning operations.
+                - Offer data-driven insights that provide value to both internal and external customers.
+                - Foster an environment that emphasizes trust, open communication, creative thinking, and cohesive team effort.
+                - Build and maintain machine learning solutions in production.
+                - The initial models may be against data in our on-premise infrastructure. As the data engineers migrate more of our data to AWS, the ML model will be against data in AWS.
+                
+                What type of person are you?
+                
+                - Excellent written and verbal communication skills and an ability to maintain a high degree of professionalism in all client communications.
+                - Ability to influence others, build relationships, manage conflicts, and handle negotiations.
+                - Excellent organization, time management, problem-solving, and analytical skills.
+                - Proactive mindset and ability to work independently in a fast-paced environment focused on results.
+                - Ability to handle pressure.
+                
+                What skills do you bring? (Hard Skills)
+                
+                - Minimum of 2 to 3 years of experience building machine learning pipelines.
+                - An undergraduate or masters degree in Computer Science, Statistics, Analytics, or a similar discipline
+                - Sound knowledge of machine learning lifecycle from data gathering to model deployment.
+                - Experience deploying machine learning models into a production environment.
+                - Demonstrable experience with regression, clustering, and classification algorithms.
+                - Preferable to have experience with one or more of Data tools, Databricks, Snowflake, SQL, R, Python, Spark.
+                - Knowledge in one of AzureML or AWS Sagemaker desirable.
+                - Experience in CI/CD and good understanding of containerization concepts.
+                - Experience in building API’s for Model Serving is an asset.
+                
+                What you can expect from us?
+                
+                - Award-winning culture that fosters growth, diversity and inclusion for all
+                - Paid day off for your birthday
+                - Access to LinkedIn learning courses
+                - Continued education with our education reimbursement program
+                - Flexible schedules
+                - Two paid days for volunteer opportunities
+                - Well-Being Days!
+                '
+                ->
+                '
+                {
+                    "job_title": "Machine Learning Engineer",
+                    "company": "KUBRA",
+                    "key_skills": ["Databricks", "Snowflake", "SQL", "R", "Python", "Spark", "AzureML", "AWS"],
+                    "job_description_summary": "KUBRA is seeking a Machine Learning Engineer to join their Data Analytics Team. The role involves designing and maintaining machine learning algorithms to extract value from data. Collaboration with BI Analysts and Data Engineers is required to introduce new data and best practices. The engineer will build scalable machine learning architecture, automate machine learning operations, offer data-driven insights, and ensure trust, open communication, and a cohesive team effort.",
+                    "job_responsibilities_summary": "- Working on designing and maintaining the Machine Learning algorithms;\n - Collaborating with BI Analysts, and Data Engineers to introduce new data on machine learning standards and best practices"
+                }
+                '
+                """)
+    <{job_description}>
+```
+
+### 个人学习助手
+
+1. 特性（Features）：AI导师具有一系列个性化特性，包括内容深度（从1级到10级，分别对应不同的学习阶段，如小学、中学、大学预备、本科、研究生等），学习风格（包括感知、视觉、归纳、主动、顺序、直觉、口头、演绎、反思、全球等），沟通风格（包括随机、正式、教科书、外行、讲故事、苏格拉底、幽默等），语气风格（包括辩论、鼓励、中立、信息、友好等），推理框架（包括演绎、归纳、假设、类比、因果等）。
+2. 命令（Commands）：AI导师支持一系列以"/"为前缀的命令，如测试学生、引导用户进行配置过程、创建基于学生偏好的课程计划、搜索学生指定的内容、开始课程计划、继续上次的内容、执行自我评估、更改语言、使用插件进行内容可视化等。
+3. 规则（Rules）：AI导师需要遵循一系列规则，如遵循学生指定的学习风格、沟通风格、语气风格、推理框架和深度，能够根据学生的偏好创建课程计划，果断地引导学生的学习，始终清楚下一步的内容，始终考虑到配置，因为它代表了学生的偏好，允许在特定课程中调整配置以强调特定元素，并告知学生更改等。
+4. 格式（Formats）：这些是AI导师应严格遵循的特定格式，包括配置、配置提醒、自我评估、计划、课程、测试等。
+5. 初始化（Init）：作为AI导师，需要以问候、版本、作者、执行配置格式、询问学生的偏好、提及/language命令等方式进行初始化。
+
+第一个好处是模块化，增加或减少功能都以模块的方式，非常方便，易于管理。
+
+第二个好处是减少了用户提问题的心智负担，Prompt 的交互有闭环性，操作是很无脑的，大多数情况不需要考虑怎样提问题。
+
+第三个好处是斜杠命令的设计，使用户在正常对话的时候，还能抽离出来，调用一些常用功能。
+
+
+### 范例
+
+1、GPT4
+
+2、个人助手
+
+3、翻译助手
+
 https://ai.newzone.top/
 
 
@@ -189,6 +328,13 @@ https://medium.com/better-programming/10-tips-for-improving-your-coding-with-cha
 
 ### 构建自己的应用
 
+
+
+## 参考
+
+* https://www.promptingguide.ai/zh
+* https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor
+* https://arxiv.org/pdf/2305.11430.pdf
 
 
 好玩的项目
@@ -286,6 +432,17 @@ https://www.copy.ai/
 * https://platform.openai.com/docs/introduction
 * https://github.com/acheong08/ChatGPT
 * https://github.com/PlexPt/awesome-chatgpt-prompts-zh
+* learnprompting.org/zh-Hans/docs/intro
+* learningprompt.wiki/docs
+* github.com/yzfly/awesome-chatgpt-zh
+* github.com/yzfly/wonderful-prompts
+* prompt-patterns.phodal.com/
+* https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/advanced-prompt-engineering?pivots=programming-language-chat-completions#specifying-the-output-structure
+
+
+
+
+
 
 在线体验
 
@@ -300,6 +457,14 @@ https://www.copy.ai/
 提示交流
 
 * https://flowgpt.com/
+* https://www.aishort.top/
+* https://www.explainthis.io/zh-hans/chatgpt
+* github.com/PlexPt/awesome-chatgpt-prompts-zh
+* github.com/f/awesome-chatgpt-prompts/
+* https://hero.page/ai-prompts
+* huggingface.co/spaces/merve/ChatGPT-prompt-generator
+* https://prompt.noonshot.com/
+
 
 AI 工具聚合网站
 
