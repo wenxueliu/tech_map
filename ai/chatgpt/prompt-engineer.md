@@ -43,13 +43,11 @@ Prompt Engineering 是一种人工智能（AI）技术，它通过设计和改�
 
 ### 提示工程的本质
 
-本质上就是设计一个比较契合上游预训练任务的模板，通过模板的设计就是挖掘出上游预训练模型的潜力，让上游的预训练模型在尽量不需要标注数据的情况下比较好的完成下游的任务，关键包括 3 个步骤：
+本质上就是设计一个比较契合上游预训练任务的模板，通过模板的设计挖掘出上游预训练模型的潜力，让上游的预训练模型在尽量不需要标注数据的情况下比较好的完成下游的任务，关键包括 3 个步骤：
 
 1. 设计预训练语言模型的任务
 2. 设计输入模板样式（Prompt Engineering）
 3. 设计 label 样式及模型的输出映射到 label 的方式（Answer Engineering）
-
-
 
 ### 要不要学提示工程
 
@@ -65,30 +63,15 @@ LLM 对你一无所知！！！
 
 LLM 对你一无所知！！！
 
+LLM 对公开的数据自带上下文
+
+LLM 对私有领域数据一无所知
+
 ### 提示工程的类型
 
 * 零样本提示（zero shot prompt ）
-
 * 少样本提示（few shot prompt）
 * 思维链（chain-of-thought）
-
-* 自我一致性（self-Consistency）
-
-* 生成知识提示（generate knowledge prompt）
-* 自动提示（Automatic Prompt Engineer ）
-* Active-Prompt
-* 方向性刺激提示（Directional Stimulus Prompting）
-* 多模态思维链提示方法
-
-
-
-
-
-零样本思维链（Zero Shot Chain of Thought，Zero-shot-CoT）提示过程(1)是对 CoT prompting(2) 的后续研究，引入了一种非常简单的零样本提示。他们发现，通过在问题的结尾附加“。**”这几个词，大语言模型能够生成一个回答问题的思维链
-
-最少到最多提示过程 (Least to Most prompting, LtM)(1) 将 思维链提示过程 (CoT prompting) 进一步发展，首先将问题分解为子问题，然后逐个解决。它是受到针对儿童的现实教育策略的启发而发展出的一种技术。在结尾增加“在解决问题之前我们必须回答哪些子问题？”
-
-
 
 ### 提示组成
 
@@ -96,33 +79,24 @@ LLM 对你一无所知！！！
 
 **上下文**：包含外部信息或额外的上下文信息，引导语言模型更好地响应。
 
+1. 角色扮演：包括AI扮演的角色，答案面向的角色。假设你是一个翻译家。解释下黑洞，让小学生也可以听懂
+2. 强化具体身份：假设你是一个20年工作的翻译专家，拥有多个博士学位。
+3. 准确的上下文信息：结构化表达
+4. 答案模板：可能知道和不知道的问题和答案
+
 **输入数据**：用户输入的内容或问题。
+
+1. 简洁、精确
+2. 删除无用信息和修饰词
+3. 抽象转化
 
 **输出指示**：指定输出的类型或格式。
 
+1. 长度范围
+2. 风格：搞笑的，轻松的，正式的，口语的，适合口播的，学术的，书面的等等。更多问gpt
+3. 格式：对 json 和 markdown 格式支持最好
 
-
-1、角色扮演：包括AI扮演的角色，也包括答案面向的角色。假设你是一个翻译家。解释下黑洞，让小学生也可以听懂
-
-2、强化具体身份：假设你是一个20年工作的翻译专家，拥有多个博士学位。
-
-2、准确的上下文信息：
-
-3、答案模板
-
-给出一些示例
-
-4、在结尾说明风格，搞笑的，轻松的，正式的，口语的，适合口播的，学术的，书面的等等
-
-5、如何提高输出的准确性
-
-- 在上下文中提供基本事实（例如相关文章段落或维基百科条目），以减少模型生成虚构文本的可能性。
-- 通过降低概率参数并指示模型在不知道答案时承认（例如，“我不知道”）来配置模型以生成更少样式的响应。
-- 在提示中提供问题和答案的组合示例，其中可能知道和不知道的问题和答案。
-
-
-
-### 提示工程的方法
+### 提示工程框架
 
 CRISPE Prompt Framework，CRISPE是首字母的缩写，分别代表以下含义：
 
@@ -136,8 +110,6 @@ CRISPE Prompt Framework，CRISPE是首字母的缩写，分别代表以下含义
 
 **E：Experiment（实验），要求** **ChatGPT** **为你提供多个答案。**
 
-
-
 | Step              | Example                                                      |
 | ----------------- | ------------------------------------------------------------ |
 | Capacity and Role | Act as an expert on software development on the topic of machine learning frameworks, and an expert blog writer.<br/>把你想象成机器学习框架主题的软件开发专家，以及专业博客作者。 |
@@ -146,38 +118,12 @@ CRISPE Prompt Framework，CRISPE是首字母的缩写，分别代表以下含义
 | Personality       | When responding, use a mix of the writing styles of Andrej Karpathy, Francois Chollet, Jeremy Howard, and Yann LeCun.<br/>在回应时，混合使用 Andrej Karpathy、Francois Chollet、Jeremy Howard 和 Yann LeCun 的写作风格。 |
 | Experiment        | Give me multiple different examples.<br/>给我多个不同的例子。 |
 
-
-
 ### 模型
 
 不同任务使用不同模型
 
 1. **代码生成：code-davinci-002**
 2. **文本生成：text-davinci-003**
-
-
-
-### 风格指导（Style Guidance）
-
-风格指导就是要求 AI 以某种特定的风格来表达。如果没有给出风格指导的问题，ChatGPT 通常会返回一两个短段落的回答，少数需要更长的回答时会返回更多内容。
-
-常见风格关键词
-
-
-
-### 描述符（discriminator）
-
-如果你只想改变语气或微调提示而不是重新格式化，添加**描述符**是一个不错的方法。简单地在提示后面添加一两个词可以改变聊天机器人解释或回复您的信息的方式。你可以尝试添加形容词，如“有趣的”、“简短的”、“不友好的”、“学术语法”等，看看答案如何变化！
-
-
-
-### 描述
-
-1、精确的描述
-
-2、具体的描述：细节要为目标服务
-
-
 
 ### 润色
 
@@ -191,11 +137,11 @@ CRISPE Prompt Framework，CRISPE是首字母的缩写，分别代表以下含义
 8. 让模型使用类比或比喻的方法解释复杂问题：Explain complex ideas using analogies or comparisons.
 9. 添加现实中的例子：Include case studies or real-world examples to make concepts more relatable.
 
-
-
 ### 要点
 
 1、上下文的长度是有限制的
+
+gpt3.5 是4096，GPT4分为 GPT-8K 和 GPT-32k，大多数模型为2k左右
 
 2、指令和上下文分开
 
@@ -204,30 +150,18 @@ CRISPE Prompt Framework，CRISPE是首字母的缩写，分别代表以下含义
 总结下面一段文字 文字: """ 这里输入文字 """
 ```
 
-3、尽量包括：上下文，结果，长度，风格，格式
+3、不要说“不要xxx”，而是说“要xxx”
 
-4、长度，风格，格式要精确具体，避免说大部分，一些等不具体的量词
+4、对于公共的知识只需要描述名称，对于私有领域，需要交代详细背景。不确定，找GPT确认
 
-5、不要说“不要xxx”，而是说“要xxx”
+5、用英文提问，最后加上 respond in chinese（建议）
 
-6、适当的提示可以引导模型生成有用的输出
+6、复杂问题，可以通过在结尾增加“让我们一步步思考（Let's think step by step）" 或者 “在解决问题之前我们必须回答哪些子问题？”
 
-7、用多种表达方式以达到最佳结果
-
-8、描述具体的事情并给出相关的背景
-
-9、向模型展示你希望看到的内容，引导模型生成想要的输出
-
-10、用英文提问，最后加上 respond in chinese（建议）
-
-11、复杂问题，可以通过在结尾增加“让我们一步步思考（Let's think step by step）" 
 
 ### 示例
 
 https://ai.newzone.top/
-
-
-
 
 
 ### 代码
@@ -251,10 +185,7 @@ https://ai.newzone.top/
 9、模拟器：数据库，web server，命令行
 
 
-
 https://medium.com/better-programming/10-tips-for-improving-your-coding-with-chatgpt-3e589de3aff3
-
-
 
 ### 构建自己的应用
 
@@ -344,6 +275,7 @@ https://www.copy.ai/
 
 提示工程教程
 
+* https://www.promptingguide.ai/zh
 * https://github.com/thinkingjimmy/Learning-Prompt
 * https://github.com/dair-ai/Prompt-Engineering-Guide
 * https://github.com/trigaten/Learn_Prompting
