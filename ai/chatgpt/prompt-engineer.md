@@ -328,6 +328,16 @@ https://medium.com/better-programming/10-tips-for-improving-your-coding-with-cha
 
 ### 构建自己的应用
 
+提示工程的难点
+
+1、准确描述能力
+2、抽象能力
+3、业务领域知识
+
+### 总结
+
+提示工程的
+
 
 
 ## 参考
@@ -438,7 +448,7 @@ https://www.copy.ai/
 * github.com/yzfly/wonderful-prompts
 * prompt-patterns.phodal.com/
 * https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/advanced-prompt-engineering?pivots=programming-language-chat-completions#specifying-the-output-structure
-
+* https://github.com/RimaBuilds/Master-coding-prompts-with-ChatGPT
 
 
 
