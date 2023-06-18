@@ -1,4 +1,6 @@
 
+https://jenkov.com/tutorials/java-util-concurrent/atomicstampedreference.html
+
 ### 目标
 
 初、中级：扎实的 Java 和计算机科学基础，掌握主流的开源框架使用；
