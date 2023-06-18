@@ -2,6 +2,20 @@ spring-mvc
 
 
 
+
+
+## spring servlet
+
+
+
+![spring-mvc-servlet](spring-mvc-servlet.png)
+
+
+
+
+
+
+
 **SpringMVC流程**
 
 1. 用户发送请求至前端控制器DispatcherServlet。
