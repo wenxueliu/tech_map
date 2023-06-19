@@ -114,17 +114,21 @@ gpt3.5 是4096，GPT4分为 GPT-8K 和 GPT-32k，大多数模型为2k左右
 
 2、[写注释](https://sharegpt.com/c/TdP1dz2)
 
-3、[生成代码]()
+3、生成代码
+
+[提示后生成1](https://sharegpt.com/c/oDOdPhh)
+
+[提示后生成2](https://sharegpt.com/c/P3qo4UC)
+
+[错误 csv 文件解析1](https://sharegpt.com/c/wQtdOWg)
+
+[正确 csv 文件解析](https://sharegpt.com/c/8Kwlclu)
 
 4、[基于已有代码生成代码](https://sharegpt.com/c/LqsKDFQ)
 
 5、[重构代码](https://sharegpt.com/c/Uaa5SPF)
 
 6、[测试代码](https://sharegpt.com/c/WgGyOyA)
-
-8、写数据库脚本
-
-https://medium.com/better-programming/10-tips-for-improving-your-coding-with-chatgpt-3e589de3aff3
 
 ### 提示词的能力边界
 
