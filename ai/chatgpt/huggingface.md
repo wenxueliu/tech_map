@@ -1,11 +1,4 @@
-
-
 ## HuggingFace
-
-
-
-
-
 
 
 如何不交互登录 huggingface 下载模型
