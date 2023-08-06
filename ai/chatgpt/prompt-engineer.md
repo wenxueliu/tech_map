@@ -112,27 +112,58 @@ gpt3.5 是4096，GPT4分为 GPT-8K 和 GPT-32k，大多数模型为2k左右
 2. 结构化表达能力：
 3. 抽象能力：
 
-### 代码
+## 提示工程在软件领域的应用
 
-1. [解释代码](https://sharegpt.com/c/IWwoRpy)
+###  解释代码
 
-2、[写注释](https://sharegpt.com/c/TdP1dz2)
+在阅读代码的时候，难免会遇到比较难理解的代码，通过大模型可以帮忙快速理解代码。
 
-3、生成代码
+如下示例，对于位运算不熟悉，看完觉得云里雾里，通过提示，这段代码实现了什么功能，为什么这么设计。
+
+![prompt_engineering_explain_code1](prompt_engineer_explain_code1.png)
+
+![prompt_engineering_explain_code1](prompt_engineer_explain_code2.png)
+
+![prompt_engineering_explain_code1](prompt_engineer_explain_code3.png)
+
+对于有些代码，大模型解释完，感觉还是理解不够，可以要求输出示例，加深理解。
+
+### 写注释
+
+程序员对写注释一直比较敷衍，很多注释并不能做到提升代码可读性的要求。
+
+如下示例，通过简单的提示词，大模型输出的注释要远好于大多数人工注释。
+
+![prompt_engineer_comment_code2](prompt_engineer_comment_code1.png)
+
+![prompt_engineer_comment_code2](prompt_engineer_comment_code2.png)
+
+
+### 生成代码
+
+大模型吸引我们的最大的特点是可以生成代码。而代码生成包括好几种场景。比如，新需求的模块级特性  
+或在已有代码的增量开发。数据显示，
+github已经有超过50%的代码是由编程工具Github Copilot生成。
+
+#### 特性代码生成
+
+#### 增量代码生成
+
 
 [提示后生成1](https://sharegpt.com/c/oDOdPhh)
 
 [提示后生成2](https://sharegpt.com/c/P3qo4UC)
 
-[错误 csv 文件解析1](https://sharegpt.com/c/wQtdOWg)
 
-[正确 csv 文件解析](https://sharegpt.com/c/8Kwlclu)
+[基于已有代码生成代码](https://sharegpt.com/c/LqsKDFQ)
 
-4、[基于已有代码生成代码](https://sharegpt.com/c/LqsKDFQ)
+#### 重构代码
 
-5、[重构代码](https://sharegpt.com/c/Uaa5SPF)
+https://sharegpt.com/c/Uaa5SPF
 
-6、[测试代码](https://sharegpt.com/c/WgGyOyA)
+####  测试代码
+
+https://sharegpt.com/c/WgGyOyA)
 
 ### 提示词的能力边界
 
@@ -147,9 +178,14 @@ gpt3.5 是4096，GPT4分为 GPT-8K 和 GPT-32k，大多数模型为2k左右
 
 ### 提示工程的难点
 
+[错误 csv 文件解析1](https://sharegpt.com/c/wQtdOWg)
+
+[正确 csv 文件解析](https://sharegpt.com/c/8Kwlclu)
+
 1. 准确描述能力
 2. 抽象能力
 3. 业务领域知识
+
 
 ### 总结
 
