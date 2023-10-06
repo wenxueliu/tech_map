@@ -40,15 +40,14 @@ public class ImageLocation {
     private String geoHash;
 }
 """
-参考以上实体类，根据如下业务逻辑和约束一步一步生成Java代码，业务逻辑描述如下：
+参考以上实体类，以markdown格式生成相关对象建表 SQL 语句，包括列名,数据类型，是否为空，注释，业务逻辑描述如下：
 """
 存储图片地理信息
 1、根据将图片地理信息写入数据库
 """
 约束：
-1. 以markdown格式生成相关对象建表 SQL 语句，包括列名,数据类型，是否为空，注释
-2. 所有表默认增 create_time 和 update_time 两个列
-3. 仅生成建表sql
+1. 所有表默认增 create_time 和 update_time 两个列
+2. 仅生成建表sql
 ```
 
 
