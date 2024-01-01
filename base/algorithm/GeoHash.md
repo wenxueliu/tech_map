@@ -192,3 +192,5 @@ Movable Type Scripts : http://www.movable-type.co.uk/scripts/geohash.html
 使用 Apache Lucene 和 Solr 进行位置感知搜索  :http://www.ibm.com/developerworks/cn/java/j-spatial/
 
 https://segmentfault.com/a/1190000038529554
+
+https://zhuanlan.zhihu.com/p/38639394
