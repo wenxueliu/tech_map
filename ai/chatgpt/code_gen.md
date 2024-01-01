@@ -24,8 +24,6 @@ public class ImageLocation {
 
 
 
-
-
 ## 文心一言
 
 问：
@@ -520,6 +518,875 @@ public class ImageDTO {
 ```
 
 
+
+
+
+
+
+```
+假设你是一名java技术专家，下面是一些 Java 实体类
+"""
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+"""
+参考以上实体类，综合分析如下业务逻辑，根据 OpenAPI 3规范，生成yaml 格式的 API 接口文档：
+"""
+存储图片
+1. 从 ImageDTO 解析出 ImageInfo 和 ImageLocation
+2. 将 ImageInfo 写入数据库
+3. 将 ImageLocation 写入数据库
+
+根据 imageId 查询图片信息
+1. 先从 redis 根据 imageId 查询 ImageDTO，如果查询到，返回；否则，继续
+2. 根据 imageId 查询 ImageLocation
+3. 根据 imageId 查询 ImageInfo
+4. 将 ImageLocation 和 ImageInfo 组合为 ImageDTO
+
+根据经纬度查询所有图片信息
+1. 调用 redis 根据经纬度计算 x 公里的所有经纬度
+2. 根据经纬度列表找到所有的 ImageLocation
+3. 根据 ImageLocation 的 imageId 查询所有图片，返回ImageDTO
+
+删除图片的地理信息
+1. 根据 imageId 删除 ImageLocation
+
+删除图片
+1. 从 redis 中删除 imageId 对应的ImageDTO
+2. 从数据库删除 imageId 对应的 ImageInfo
+3. 从数据库删除 imageId 对应的 ImageLocation
+"""
+
+```
+
+
+
+```
+假设你是一名java技术专家，下面是一些 Java 实体类
+"""
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步生成Java代码，业务逻辑描述如下：
+"""
+存储图片
+1. 从 ImageDTO 解析出 ImageInfo 和 ImageLocation
+2. 将 ImageInfo 写入数据库
+3. 将 ImageLocation 写入数据库
+
+根据 imageId 查询图片信息
+1. 先从 redis 根据 imageId 查询 ImageDTO，如果查询到，返回；否则，继续
+2. 根据 imageId 查询 ImageLocation
+3. 根据 imageId 查询 ImageInfo
+4. 将 ImageLocation 和 ImageInfo 组合为 ImageDTO
+
+根据经纬度查询所有图片信息
+1. 调用 redis 根据经纬度计算 x 公里的所有经纬度
+2. 根据经纬度列表找到所有的 ImageLocation
+3. 根据 ImageLocation 的 imageId 查询所有图片，返回ImageDTO
+
+删除图片的地理信息
+1. 根据 imageId 删除 ImageLocation
+
+删除图片
+1. 从 redis 中删除 imageId 对应的ImageDTO
+2. 从数据库删除 imageId 对应的 ImageInfo
+3. 从数据库删除 imageId 对应的 ImageLocation
+"""
+约束：
+1. 采用 SpringMVC 架构
+2. 依赖 lombok、mybatis-plus
+3. 生成 Controller 层，类的包路径为 com.imagedance.zpai.controller
+4. 生成 Service 层接口类，类的包路径为 com.imagedance.zpai.service
+5. 根据业务逻辑描述生成 Service 实现类，类的包路径为 com.imagedance.zpai.service.impl
+6. 根据service实现类生成 dao 层接口，dao 层接口类的包路径为 com.imagedance.zpai.dao
+7. 根据service实现类生成 dao 层接口生成 mybatis 的 xml 文件及相应 sql
+```
+
+
+
+
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+"""
+参考以上类，综合分析如下业务逻辑补全Java代码，业务逻辑描述如下：
+"""
+存储图片
+1. 从 ImageDTO 解析出 ImageInfo 和 ImageLocation
+2. 将 ImageInfo 写入数据库
+3. 将 ImageLocation 写入数据库
+
+根据 imageId 查询图片信息
+1. 先从 redis 根据 imageId 查询 ImageDTO，如果查询到，返回；否则，继续
+2. 根据 imageId 查询 ImageLocation
+3. 根据 imageId 查询 ImageInfo
+4. 将 ImageLocation 和 ImageInfo 组合为 ImageDTO
+
+根据经纬度查询所有图片信息
+1. 调用 redis 根据经纬度计算 x 公里的所有经纬度
+2. 根据经纬度列表找到所有的 ImageLocation
+3. 根据 ImageLocation 的 imageId 查询所有图片，返回ImageDTO
+
+删除图片的地理信息
+1. 根据 imageId 删除 ImageLocation
+
+删除图片
+1. 从 redis 中删除 imageId 对应的ImageDTO
+2. 从数据库删除 imageId 对应的 ImageInfo
+3. 从数据库删除 imageId 对应的 ImageLocation
+```
+
+
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+<mapper namespace="com.imagedance.zpai.dao.ImageLocationDao">
+    <!-- 实现 ImageLocation 的 MyBatis 映射 -->
+</mapper>
+
+<mapper namespace="com.imagedance.zpai.dao.ImageInfoDao">
+    <!-- 实现 ImageInfo 的 MyBatis 映射 -->
+</mapper>
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步补全Java代码，业务逻辑描述如下：
+"""
+存储图片
+1. 从 ImageDTO 解析出 ImageInfo 和 ImageLocation
+2. 将 ImageInfo 写入数据库
+3. 将 ImageLocation 写入数据库
+
+根据 imageId 查询图片信息
+1. 先从 redis 根据 imageId 查询 ImageDTO，如果查询到，返回；否则，继续
+2. 根据 imageId 查询 ImageLocation
+3. 根据 imageId 查询 ImageInfo
+4. 将 ImageLocation 和 ImageInfo 组合为 ImageDTO
+
+根据经纬度查询所有图片信息
+1. 调用 redis 根据经纬度计算 x 公里的所有经纬度
+2. 根据经纬度列表找到所有的 ImageLocation
+3. 根据 ImageLocation 的 imageId 查询所有图片，返回ImageDTO
+
+删除图片的地理信息
+1. 根据 imageId 删除 ImageLocation
+
+删除图片
+1. 从 redis 中删除 imageId 对应的ImageDTO
+2. 从数据库删除 imageId 对应的 ImageInfo
+3. 从数据库删除 imageId 对应的 ImageLocation
+"""
+约束
+1. 依赖 lombok、mybatis-plus 和 redistemplate
+2. 补全 controller 类代码
+3. 补全 ImageServiceImpl 类的代码
+4. 补全 ImageLocationDao和ImageInfoDao类的代码
+5. 补全 mybatis xml 文件 sql 
+```
+
+
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+<mapper namespace="com.imagedance.zpai.dao.ImageLocationDao">
+    <!-- 实现 ImageLocation 的 MyBatis 映射 -->
+</mapper>
+
+<mapper namespace="com.imagedance.zpai.dao.ImageInfoDao">
+    <!-- 实现 ImageInfo 的 MyBatis 映射 -->
+</mapper>
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步补全Java代码，业务逻辑描述如下：
+"""
+存储图片
+1. 从 ImageDTO 解析出 ImageInfo 和 ImageLocation
+2. 将 ImageInfo 写入数据库
+3. 将 ImageLocation 写入数据库
+"""
+约束
+1. 依赖 lombok、mybatis-plus 和 redistemplate
+2. 补全 controller 类代码
+3. 补全 ImageServiceImpl 类的代码
+4. 补全 ImageLocationDao和ImageInfoDao类的代码
+5. 补全 mybatis xml 文件 sql 
+```
+
+
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+<mapper namespace="com.imagedance.zpai.dao.ImageLocationDao">
+    <!-- 实现 ImageLocation 的 MyBatis 映射 -->
+</mapper>
+
+<mapper namespace="com.imagedance.zpai.dao.ImageInfoDao">
+    <!-- 实现 ImageInfo 的 MyBatis 映射 -->
+</mapper>
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步补全Java代码，业务逻辑描述如下：
+"""
+根据 imageId 查询图片信息
+1. 先从 redis 根据 imageId 查询 ImageDTO，如果查询到，返回；否则，继续
+2. 根据 imageId 查询 ImageLocation
+3. 根据 imageId 查询 ImageInfo
+4. 将 ImageLocation 和 ImageInfo 组合为 ImageDTO
+5. 将 ImageDTO 加入 Redis 缓存
+"""
+约束
+1. 依赖 lombok、mybatis-plus 和 redistemplate
+2. 补全 controller 类代码
+3. 补全 ImageServiceImpl 类的代码
+4. 补全 ImageLocationDao和ImageInfoDao类的代码
+5. 补全 mybatis xml 文件 sql 
+```
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+<mapper namespace="com.imagedance.zpai.dao.ImageLocationDao">
+    <!-- 实现 ImageLocation 的 MyBatis 映射 -->
+</mapper>
+
+<mapper namespace="com.imagedance.zpai.dao.ImageInfoDao">
+    <!-- 实现 ImageInfo 的 MyBatis 映射 -->
+</mapper>
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步补全Java代码，业务逻辑描述如下：
+"""
+根据经纬度查询所有图片信息
+1. 调用 redis 根据经纬度计算 x 公里的所有经纬度
+2. 根据经纬度列表找到所有的 ImageLocation
+3. 根据 ImageLocation 的 imageId 查询所有图片，返回ImageDTO
+"""
+约束
+1. 依赖 lombok、mybatis-plus 和 redistemplate
+2. 补全 controller 类代码
+3. 补全 ImageServiceImpl 类的代码
+4. 补全 ImageLocationDao和ImageInfoDao类的代码
+5. 补全 mybatis xml 文件 sql 
+```
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+<mapper namespace="com.imagedance.zpai.dao.ImageLocationDao">
+    <!-- 实现 ImageLocation 的 MyBatis 映射 -->
+</mapper>
+
+<mapper namespace="com.imagedance.zpai.dao.ImageInfoDao">
+    <!-- 实现 ImageInfo 的 MyBatis 映射 -->
+</mapper>
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步补全Java代码，业务逻辑描述如下：
+"""
+删除图片的地理信息
+1. 根据 imageId 删除 ImageLocation
+"""
+约束
+1. 依赖 lombok、mybatis-plus 和 redistemplate
+2. 补全 controller 类代码
+3. 补全 ImageServiceImpl 类的代码
+4. 补全 ImageLocationDao和ImageInfoDao类的代码
+5. 补全 mybatis xml 文件 sql 
+```
+
+
+
+```
+"""
+import lombok.Data;
+
+@Data
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+
+import lombok.Data;
+
+@Data
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+@RestController
+@RequestMapping("/images")
+@RequiredArgsConstructor
+public class ImageController {
+    private final ImageService imageService;
+}
+
+public interface ImageService {
+    void storeImage(ImageDTO imageDTO);
+    ImageDTO getImageById(String imageId);
+    List<ImageDTO> getImagesByLocation(Double longitude, Double latitude, Double distance);
+    void deleteImageLocation(String imageId);
+    void deleteImage(String imageId);
+}
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private final ImageLocationDao imageLocationDao;
+    private final ImageInfoDao imageInfoDao;
+}
+
+@Repository
+public interface ImageLocationDao extends BaseMapper<ImageLocation> {
+}
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ImageInfoDao extends BaseMapper<ImageInfo> {
+}
+<mapper namespace="com.imagedance.zpai.dao.ImageLocationDao">
+    <!-- 实现 ImageLocation 的 MyBatis 映射 -->
+</mapper>
+
+<mapper namespace="com.imagedance.zpai.dao.ImageInfoDao">
+    <!-- 实现 ImageInfo 的 MyBatis 映射 -->
+</mapper>
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步补全Java代码，业务逻辑描述如下：
+"""
+删除图片
+1. 从 redis 中删除 imageId 对应的ImageDTO
+2. 从数据库删除 imageId 对应的 ImageInfo
+3. 从数据库删除 imageId 对应的 ImageLocation
+"""
+约束
+1. 依赖 lombok、mybatis-plus 和 redistemplate
+2. 补全 controller 类代码
+3. 补全 ImageServiceImpl 类的代码
+4. 补全 ImageLocationDao和ImageInfoDao类的代码
+5. 补全 mybatis xml 文件 sql 
+```
+
+
+
+
+
+
+
+```
+假设你是一名java技术专家，下面是一些 Java 实体类
+"""
+public class ImageLocation {
+    private String imageId;
+    private Double longitude;
+    private Double latitude;
+    private String geoHash;
+}
+public class ImageInfo {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+}
+public class ImageDTO {
+    private String id;
+    private String name;
+    private String description;
+    private String url;
+    private String geoHash;
+    private Double longitude;
+    private Double latitude;
+}
+
+存储图片
+1. 从 ImageDTO 解析出 ImageInfo 和 ImageLocation
+2. 将 ImageInfo 写入数据库
+3. 将 ImageLocation 写入数据库
+
+根据 imageId 查询图片信息
+1. 先从 redis 根据 imageId 查询 ImageDTO，如果查询到，返回；否则，继续
+2. 根据 imageId 查询 ImageLocation
+3. 根据 imageId 查询 ImageInfo
+4. 将 ImageLocation 和 ImageInfo 组合为 ImageDTO
+
+根据经纬度查询所有图片信息
+1. 调用 redis 根据经纬度计算 x 公里的所有经纬度
+2. 根据经纬度列表找到所有的 ImageLocation
+3. 根据 ImageLocation 的 imageId 查询所有图片，返回ImageDTO
+
+删除图片的地理信息
+1. 根据 imageId 删除 ImageLocation
+
+删除图片
+1. 从 redis 中删除 imageId 对应的ImageDTO
+2. 从数据库删除 imageId 对应的 ImageInfo
+3. 从数据库删除 imageId 对应的 ImageLocation
+
+"""
+参考以上类，综合分析如下业务逻辑和约束一步步生成Java代码，业务逻辑描述如下：
+"""
+"""
+约束：
+1. 采用 SpringMVC 架构
+2. 依赖 lombok、mybatis-plus
+3. 生成 Controller 层，类的包路径为 com.imagedance.zpai.controller
+4. 生成 Service 层接口类，类的包路径为 com.imagedance.zpai.service
+5. 根据业务逻辑描述生成 Service 实现类，类的包路径为 com.imagedance.zpai.service.impl
+6. 根据service实现类生成 dao 层接口，dao 层接口类的包路径为 com.imagedance.zpai.dao
+7. 根据service实现类生成 dao 层接口生成 mybatis 的 xml 文件及相应 sql
+```
 
 
 
