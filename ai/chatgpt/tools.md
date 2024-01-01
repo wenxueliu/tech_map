@@ -30,6 +30,12 @@ https://zhuanlan.zhihu.com/p/627491455
 
 
 
+## 模型测试
+
+https://chat.lmsys.org/
+
+https://huggingface.co/spaces/HuggingFaceH4/starchat-playground
+
 
 
 
@@ -37,6 +43,12 @@ https://zhuanlan.zhihu.com/p/627491455
 ## 开发领域
 
 [Gorilla](https://zhuanlan.zhihu.com/p/632583909)
+
+streamlit
+
+chainlit
+
+
 
 
 
@@ -66,7 +78,9 @@ https://www.mianshigee.com/project/handlebars-java/
 
 https://zhuanlan.zhihu.com/p/630052782
 
+https://huggingface.co/datasets/spider
 
+https://huggingface.co/datasets/code_x_glue_tc_text_to_code
 
 
 
@@ -124,7 +138,25 @@ https://promptperfect.jinaai.cn/
 
 [TOOLLLM](https://zhuanlan.zhihu.com/p/647899563)
 
+LangSmith
 
+Langchain
+
+https://github.com/abi/screenshot-to-code  截图生成前端代码
+
+PEG.js
+
+Java 自动代码生成
+
+https://gitee.com/ssssssss-team/magic-api
+
+utilsbox：代码模板 https://utilsbox.cn/
+
+light2f: https://light2f.com/
+
+JeecgBoot
+
+pairwise 用例生成 https://pairwise.teremokgames.com/
 
 ## 模型评估
 
