@@ -31,11 +31,23 @@ Restful 工具对比
 
 
 
+UT 方法调研
+
+
+
 
 
 
 
 参考
+
+An Empirical Evaluation of Using Large Language Models for Automated Unit Test Generation 
+
+ https://arxiv.org/pdf/2302.06527.pdf
+
+Unit Test Generation using Generative AI : A Comparative Performance Analysis of Autogeneration Tools https://arxiv.org/pdf/2312.10622.pdf
+
+Reinforcement Learning from Automatic Feedback for High-Quality Unit Test Generation https://www.franktip.org/pubs/testpilot2024.pdf
 
 https://arxiv.org/pdf/2204.08348.pdf
 
@@ -48,3 +60,5 @@ https://dl.acm.org/doi/pdf/10.1145/3551349.3559498
 https://arxiv.org/pdf/2204.12148.pdf
 
 https://dl.acm.org/doi/10.1145/3617175#d1e1509
+
+https://arxiv.org/pdf/2312.00894.pdf

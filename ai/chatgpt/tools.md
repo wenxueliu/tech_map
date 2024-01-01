@@ -172,3 +172,10 @@ https://zhuanlan.zhihu.com/p/638738275
 
 https://zhuanlan.zhihu.com/p/641092516
 
+
+
+ A Survey on Large Language Models for Software Engineering https://arxiv.org/abs/2312.15223
+
+Redefining Developer Assistance: Through Large Language Models in Software Ecosystem https://arxiv.org/abs/2312.05626
+
+A Survey of Large Language Models for Code: Evolution, Benchmarking, and Future Trends https://arxiv.org/pdf/2311.10372.pdf
