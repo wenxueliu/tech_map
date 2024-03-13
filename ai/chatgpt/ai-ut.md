@@ -86,3 +86,5 @@ https://symflower.com/en/company/blog/2023/symflower-github-copilot/
 https://symflower.com/en/company/blog/2022/methods-for-automated-test-value-generation/ 
 
 https://symflower.com/en/company/blog/2021/symbolic-execution/
+
+https://link.springer.com/content/pdf/10.1007/s11219-023-09620-w.pdf
