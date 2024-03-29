@@ -46,6 +46,209 @@ Restful 工具对比
 4、用例验证
 
 
+## 例子
+
+
+首先，来个例子
+
+```json
+基于以下代码生成 Java UT 代码"""{
+  "classname" : "com.imagedance.zpai.controller.ImageController",
+  "storedCandidateMap" : {
+    "com.imagedance.zpai.controller.ImageController#addCollectImage#(Lcom/imagedance/zpai/model/ImageCollect;)Lcom/imagedance/zpai/model/ResultVo;" : [ {
+      "lineNumbers" : [ 74, 75 ],
+      "testAssertions" : {
+        "subAssertions" : [ {
+          "subAssertions" : [ ],
+          "expression" : "SELF",
+          "expectedValue" : "{\"code\":\"0\",\"message\":\"ok\",\"data\":\"\"}",
+          "id" : "6a21ca85-31e1-45db-82bd-e98d7a98649e",
+          "assertionType" : "EQUAL",
+          "key" : "/"
+        } ],
+        "expression" : "SELF",
+        "expectedValue" : null,
+        "id" : "220de3fe-bce2-45bd-9114-e65b87810729",
+        "assertionType" : "ALLOF",
+        "key" : null
+      },
+      "candidateId" : "bacaee95-94cc-4c8c-90b2-408a5e119ab8",
+      "name" : "test addCollectImage returns expected value when",
+      "description" : "assert that the response value matches expected value",
+      "methodArguments" : [ "{\"userId\":\"1\",\"imageId\":\"1\",\"createTime\":\"1\",\"deleteTime\":\"1\"}" ],
+      "returnValue" : "{\"code\":\"0\",\"message\":\"ok\",\"data\":\"\"}",
+      "returnValueClassname" : "com.imagedance.zpai.model.ResultVo",
+      "metadata" : {
+        "recordedBy" : "Administrator",
+        "hostMachineName" : "Administrator",
+        "timestamp" : 53179334160000,
+        "candidateStatus" : "PASSING"
+      },
+      "sessionIdentifier" : -749579435,
+      "probSerializedValue" : "eyJjb2RlIjoiMCIsIm1lc3NhZ2UiOiJvayIsImRhdGEiOiIifQ==",
+      "mockIds" : [ ],
+      "exception" : false,
+      "method" : {
+        "name" : "addCollectImage",
+        "signature" : "(Lcom/imagedance/zpai/model/ImageCollect;)Lcom/imagedance/zpai/model/ResultVo;",
+        "className" : "com.imagedance.zpai.controller.ImageController",
+        "methodHash" : 0
+      }
+    } ],
+    "com.imagedance.zpai.controller.ImageController#queryCollectImages#(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;)Lcom/imagedance/zpai/model/ResultVo;" : [ {
+      "lineNumbers" : [ 88, 89 ],
+      "testAssertions" : {
+        "subAssertions" : [ {
+          "subAssertions" : [ ],
+          "expression" : "SELF",
+          "expectedValue" : "{\"code\":\"0\",\"message\":\"ok\",\"data\":[]}",
+          "id" : "5c6ac592-efe0-4ada-adc2-c4fd7e1e05bc",
+          "assertionType" : "EQUAL",
+          "key" : "/"
+        } ],
+        "expression" : "SELF",
+        "expectedValue" : null,
+        "id" : "53d15c17-1d68-4a85-a9b1-5ad1f5330335",
+        "assertionType" : "ALLOF",
+        "key" : null
+      },
+      "candidateId" : "85d61afe-50ef-4936-86c0-65293753a3bc",
+      "name" : "test queryCollectImages returns expected value when",
+      "description" : "assert that the response value matches expected value",
+      "methodArguments" : [ "\"1\"", "\"1\"", "0", "0" ],
+      "returnValue" : "{\"code\":\"0\",\"message\":\"ok\",\"data\":[]}",
+      "returnValueClassname" : "com.imagedance.zpai.model.ResultVo",
+      "metadata" : {
+        "recordedBy" : "Administrator",
+        "hostMachineName" : "Administrator",
+        "timestamp" : 53350742652200,
+        "candidateStatus" : "PASSING"
+      },
+      "sessionIdentifier" : -1203553817,
+      "probSerializedValue" : "eyJjb2RlIjoiMCIsIm1lc3NhZ2UiOiJvayIsImRhdGEiOltdfQ==",
+      "mockIds" : [ ],
+      "exception" : false,
+      "method" : {
+        "name" : "queryCollectImages",
+        "signature" : "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;)Lcom/imagedance/zpai/model/ResultVo;",
+        "className" : "com.imagedance.zpai.controller.ImageController",
+        "methodHash" : 0
+      }
+    } ]
+  },
+  "declaredMockMap" : { }
+}"""
+```
+
+生成的 UT 代码
+```java
+import com.imagedance.zpai.controller.ImageController;
+import com.imagedance.zpai.model.ImageCollect;
+import com.imagedance.zpai.model.ResultVo;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ImageControllerTest {
+
+    @Test
+    public void testAddCollectImage() {
+        ImageController imageController = new ImageController();
+        ImageCollect imageCollect = new ImageCollect("1", "1", "1", "1");
+        ResultVo resultVo = imageController.addCollectImage(imageCollect);
+        assertEquals("0", resultVo.getCode());
+        assertEquals("ok", resultVo.getMessage());
+        assertNull(resultVo.getData());
+    }
+
+    @Test
+    public void testQueryCollectImages() {
+        ImageController imageController = new ImageController();
+        ResultVo resultVo = imageController.queryCollectImages("1", "1", 0, 0);
+        assertEquals("0", resultVo.getCode());
+        assertEquals("ok", resultVo.getMessage());
+        assertTrue(resultVo.getData().isEmpty());
+    }
+}
+
+```
+
+
+例子2：包含 Mock 数据
+
+```json
+基于以下代码生成 Java UT 代码"""{
+  "classname" : "com.imagedance.zpai.service.ImageMetaService",
+  "storedCandidateMap" : { },
+  "declaredMockMap" : {
+    "com.imagedance.zpai.service.ImageMetaService#queryImages#(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;)Ljava/util/List;" : [ {
+      "id" : "c6c2d078-f4b6-4c09-9a70-808b0042a185",
+      "name" : "mock response imageMetaService.queryImages",
+      "fieldTypeName" : "com.imagedance.zpai.service.ImageMetaService",
+      "sourceClassName" : "com.imagedance.zpai.service.impl.ImageServiceImpl",
+      "fieldName" : "imageMetaService",
+      "methodName" : "queryImages",
+      "whenParameter" : [ {
+        "name" : "imageId",
+        "type" : "ANY_OF_TYPE",
+        "value" : "java.lang.String"
+      }, {
+        "name" : "userId",
+        "type" : "ANY_STRING",
+        "value" : "null"
+      }, {
+        "name" : "currentPage",
+        "type" : "ANY_OF_TYPE",
+        "value" : "int"
+      }, {
+        "name" : "pageSize",
+        "type" : "ANY_OF_TYPE",
+        "value" : "int"
+      } ],
+      "thenParameter" : [ {
+        "returnParameter" : {
+          "declaredMocks" : [ ],
+          "value" : "[]",
+          "returnValueType" : "REAL",
+          "className" : "java.util.List<com.imagedance.zpai.model.ImageInfo>"
+        },
+        "methodExitType" : "NORMAL"
+      } ]
+    } ]
+  }
+}"""
+```
+
+生成的 UT 的代码
+
+```java
+import com.imagedance.zpai.model.ImageInfo;
+import com.imagedance.zpai.service.ImageMetaService;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+public class ImageMetaServiceTest {
+
+    @Test
+    public void testQueryImages() {
+        // 创建 ImageMetaService 的 mock 对象
+        ImageMetaService imageMetaService = Mockito.mock(ImageMetaService.class);
+
+        // 设置 mock 对象的返回值
+        when(imageMetaService.queryImages("imageId", "userId", 1, 10)).thenReturn(new ArrayList<>());
+
+        // 调用 queryImages 方法并验证结果
+        List<ImageInfo> result = imageMetaService.queryImages("imageId", "userId", 1, 10);
+        assertEquals(0, result.size());
+    }
+}
+
+```
+
 
 参考
 
