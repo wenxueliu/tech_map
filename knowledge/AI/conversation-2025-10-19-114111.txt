@@ -1,0 +1,14 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ ✻ Welcome to Claude Code!                                                    │
+│                                                                              │
+│   /help for help, /status for your current setup                             │
+│                                                                              │
+│   cwd: /Users/liuwenxue/Documents/mycomputer/mygithub/tech_map/knowledge/AI  │
+│                                                                              │
+│   ────────────────────────────────────────────────────────────────────────── │
+│                                                                              │
+│   Overrides (via env):                                                       │
+│                                                                              │
+│   • API Base URL: https://open.bigmodel.cn/api/anthropic                     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
